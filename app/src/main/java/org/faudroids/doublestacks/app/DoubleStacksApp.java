@@ -3,7 +3,10 @@ package org.faudroids.doublestacks.app;
 
 import android.app.Application;
 
+import org.faudroids.doublestacks.BuildConfig;
+
 import roboguice.RoboGuice;
+import timber.log.Timber;
 
 public final class DoubleStacksApp extends Application {
 
@@ -16,14 +19,13 @@ public final class DoubleStacksApp extends Application {
 				RoboGuice.DEFAULT_STAGE,
 				RoboGuice.newDefaultRoboModule(this));
 
-		/*
 		if (BuildConfig.DEBUG) {
 			Timber.plant(new Timber.DebugTree());
 		} else {
-			Fabric.with(this, new Crashlytics());
-			Timber.plant(new CrashReportingTree());
+			throw new IllegalStateException("missing crashlytics");
+			// Fabric.with(this, new Crashlytics());
+			// Timber.plant(new CrashReportingTree());
 		}
-		*/
 	}
 
 
