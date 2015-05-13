@@ -12,6 +12,8 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 
 import org.faudroids.doublestacks.R;
 
+import javax.inject.Inject;
+
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -24,27 +26,17 @@ public class MainActivity extends RoboActivity implements
 
 	private static final int REQUEST_LOGIN = 42;
 
-	@InjectView(R.id.login_button) SignInButton loginButton;
+	@InjectView(R.id.login_button) private SignInButton loginButton;
 
 	private boolean resolvingConnectionFailure = false;
 	private boolean autoStartLoginFlow = true;
 	private boolean loginClicked = false;
 
-
-	private GoogleApiClient googleApiClient;
-
+	@Inject private GoogleApiClient googleApiClient;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		googleApiClient = new GoogleApiClient.Builder(this)
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.addApi(Games.API)
-				.addScope(Games.SCOPE_GAMES)
-				.build();
-
 		loginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -57,6 +49,8 @@ public class MainActivity extends RoboActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
+		googleApiClient.registerConnectionCallbacks(this);
+		googleApiClient.registerConnectionFailedListener(this);
 		googleApiClient.connect();
 	}
 
@@ -64,6 +58,8 @@ public class MainActivity extends RoboActivity implements
 	@Override
 	public void onStop() {
 		googleApiClient.disconnect();
+		googleApiClient.unregisterConnectionCallbacks(this);
+		googleApiClient.unregisterConnectionFailedListener(this);
 		super.onStop();
 	}
 

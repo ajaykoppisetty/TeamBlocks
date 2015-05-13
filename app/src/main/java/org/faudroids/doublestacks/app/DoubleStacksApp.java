@@ -4,6 +4,7 @@ package org.faudroids.doublestacks.app;
 import android.app.Application;
 
 import org.faudroids.doublestacks.BuildConfig;
+import org.faudroids.doublestacks.google.GoogleModule;
 
 import roboguice.RoboGuice;
 import timber.log.Timber;
@@ -17,7 +18,8 @@ public final class DoubleStacksApp extends Application {
 		RoboGuice.getOrCreateBaseApplicationInjector(
 				this,
 				RoboGuice.DEFAULT_STAGE,
-				RoboGuice.newDefaultRoboModule(this));
+				RoboGuice.newDefaultRoboModule(this),
+				new GoogleModule());
 
 		if (BuildConfig.DEBUG) {
 			Timber.plant(new Timber.DebugTree());
