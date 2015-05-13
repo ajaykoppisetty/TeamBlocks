@@ -16,4 +16,9 @@ allprojects {
     repositories {
         jcenter()
     }
+	
+	// gradle wrapper
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.4'
+    }
 }
