@@ -41,6 +41,20 @@ public class MenuFragment extends AbstractFragment implements
 			REQUEST_INVITE = 43,
 			REQUEST_WAITING_ROOM = 44;
 
+	private static final String EXTRA_INVITATION = "EXTRA_INVITATION";
+
+	/**
+	 * @param invitation a pending invitation to join a game. Can be null if none is present.
+	 */
+	public static MenuFragment createInstance(Invitation invitation) {
+		Bundle extras = new Bundle();
+		extras.putParcelable(EXTRA_INVITATION, invitation);
+		MenuFragment fragment = new MenuFragment();
+		fragment.setArguments(extras);
+		return fragment;
+	}
+
+
 	@Inject GoogleApiClient googleApiClient;
 	@InjectView(R.id.button_invite) Button inviteButton;
 
@@ -54,6 +68,8 @@ public class MenuFragment extends AbstractFragment implements
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+
+		// setup ui
 		inviteButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -62,6 +78,18 @@ public class MenuFragment extends AbstractFragment implements
 				startActivityForResult(intent, REQUEST_INVITE);
 			}
 		});
+
+		// check for pending invitations
+		Invitation invitation = getArguments().getParcelable(EXTRA_INVITATION);
+		if (invitation != null) {
+			// accept invitation and start game
+			RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
+					.setMessageReceivedListener(this)
+					.setRoomStatusUpdateListener(new DummyRoomStatusUpdateListener());
+			roomConfigBuilder.setInvitationIdToAccept(invitation.getInvitationId());
+			Games.RealTimeMultiplayer.join(googleApiClient, roomConfigBuilder.build());
+			actionListener.onGameStarted();
+		}
 	}
 
 

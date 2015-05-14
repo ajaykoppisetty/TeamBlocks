@@ -9,6 +9,8 @@ import com.google.inject.Provides;
 
 import javax.inject.Inject;
 
+import roboguice.inject.ContextSingleton;
+
 public class GoogleModule extends AbstractModule {
 
 	@Override
@@ -18,6 +20,7 @@ public class GoogleModule extends AbstractModule {
 
 	@Provides
 	@Inject
+	@ContextSingleton
 	public GoogleApiClient provideGoogleApiClient(Context context) {
 		return new GoogleApiClient.Builder(context)
 				.addApi(Games.API)

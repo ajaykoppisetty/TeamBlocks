@@ -1,6 +1,7 @@
 package org.faudroids.doublestacks.ui;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +26,10 @@ abstract class AbstractFragment extends RoboFragment {
 
 
 	@Override
-	public void onActivityCreated(Bundle bundle) {
-		super.onActivityCreated(bundle);
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
 		try {
-			actionListener = (ActionListener) getActivity();
+			actionListener = (ActionListener) activity;
 		} catch (ClassCastException e) {
 			throw new RuntimeException("activity must implement " + ActionListener.class.getName());
 		}

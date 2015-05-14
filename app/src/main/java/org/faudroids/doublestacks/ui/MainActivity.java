@@ -9,6 +9,8 @@ import android.view.WindowManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import org.faudroids.doublestacks.R;
@@ -58,9 +60,15 @@ public class MainActivity extends RoboActivity implements
 
 
 	@Override
-	public void onConnected(Bundle bundle) {
+	public void onConnected(Bundle connectionHint) {
 		Timber.d("Google login successful");
-		showFragment(new MenuFragment(), true);
+
+		// check if pending invitation
+		Invitation invitation = null;
+		if (connectionHint != null) {
+			invitation = connectionHint.getParcelable(Multiplayer.EXTRA_INVITATION);
+		}
+		showFragment(MenuFragment.createInstance(invitation), true);
 	}
 
 
