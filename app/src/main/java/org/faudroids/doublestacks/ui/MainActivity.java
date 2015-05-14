@@ -4,6 +4,7 @@ package org.faudroids.doublestacks.ui;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.WindowManager;
 
@@ -34,6 +35,14 @@ public class MainActivity extends RoboActivity implements
 	private boolean loginClicked = false;
 
 	@Inject private GoogleApiClient googleApiClient;
+	@Inject private WindowUtils windowUtils;
+
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	}
 
 
 	@Override
@@ -134,8 +143,23 @@ public class MainActivity extends RoboActivity implements
 	}
 
 
+	@Override
 	public void onGameStopped() {
 		getFragmentManager().popBackStack();
+	}
+
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			boolean success = windowUtils.startImmersiveMode(getWindow());
+			if (!success) return;
+
+			WindowManager.LayoutParams attributes = getWindow().getAttributes();
+			attributes.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+			getWindow().setAttributes(attributes);
+		}
 	}
 
 
