@@ -1,13 +1,6 @@
-<LinearLayout
+<FrameLayout
+    android:id="@+id/fragment_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/login_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-
-</LinearLayout>
+    />

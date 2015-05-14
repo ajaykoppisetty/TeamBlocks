@@ -1,13 +1,13 @@
 package org.faudroids.doublestacks.ui;
 
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.games.Games;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import org.faudroids.doublestacks.R;
@@ -16,34 +16,21 @@ import javax.inject.Inject;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 import timber.log.Timber;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity implements
+		ActionListener,
 		GoogleApiClient.ConnectionCallbacks,
 		GoogleApiClient.OnConnectionFailedListener {
 
 	private static final int REQUEST_LOGIN = 42;
-
-	@InjectView(R.id.login_button) private SignInButton loginButton;
 
 	private boolean resolvingConnectionFailure = false;
 	private boolean autoStartLoginFlow = true;
 	private boolean loginClicked = false;
 
 	@Inject private GoogleApiClient googleApiClient;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		loginButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				login();
-			}
-		});
-	}
 
 
 	@Override
@@ -66,14 +53,15 @@ public class MainActivity extends RoboActivity implements
 
 	@Override
 	public void onConnected(Bundle bundle) {
-		// TODO player is signed in, proceed?
 		Timber.d("Google login successful");
+		showFragment(new MenuFragment(), true);
 	}
 
 
 	@Override
 	public void onConnectionSuspended(int i) {
 		// nothing to do for now
+		Timber.d("Connection suspended (" + i + ")");
 	}
 
 
@@ -102,20 +90,35 @@ public class MainActivity extends RoboActivity implements
 			}
 		}
 
-		// Put code here to display the sign-in button
+		showFragment(new LoginFragment(), false);
 	}
 
 
-	private void login() {
+	@Override
+	public void onLoginClicked() {
 		loginClicked = true;
 		googleApiClient.connect();
 	}
 
 
-	// TODO use somewhere
-	private void logout() {
-		loginClicked = false;
-		Games.signOut(googleApiClient);
+	@Override
+	public void onActivityResult(int request, int response, Intent data) {
+		switch (request) {
+			case REQUEST_LOGIN:
+				if (response != RESULT_OK) {
+					Timber.d("failed to resolve login error");
+				} else {
+					googleApiClient.connect();
+				}
+		}
+	}
+
+
+	private void showFragment(Fragment fragment, boolean addToBackStack) {
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.replace(R.id.fragment_container, fragment);
+		if (addToBackStack) transaction.addToBackStack(null);
+		transaction.commit();
 	}
 
 }
