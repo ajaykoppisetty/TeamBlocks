@@ -134,6 +134,11 @@ public class MainActivity extends RoboActivity implements
 	}
 
 
+	public void onGameStopped() {
+		getFragmentManager().popBackStack();
+	}
+
+
 	private void showFragment(Fragment fragment, boolean addToBackStack) {
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.fragment_container, fragment);

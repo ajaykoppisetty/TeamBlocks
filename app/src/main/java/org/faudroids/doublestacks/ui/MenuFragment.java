@@ -10,21 +10,14 @@ import android.widget.Button;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
-import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
-import com.google.android.gms.games.multiplayer.realtime.Room;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
-import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 
 import org.faudroids.doublestacks.R;
+import org.faudroids.doublestacks.google.ConnectionManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -32,10 +25,8 @@ import roboguice.inject.InjectView;
 import timber.log.Timber;
 
 public class MenuFragment extends AbstractFragment implements
-		GoogleApiClient.ConnectionCallbacks,
-		RoomUpdateListener,
-		RealTimeMessageReceivedListener,
-		OnInvitationReceivedListener {
+		OnInvitationReceivedListener,
+		ConnectionManager.ConnectionListener {
 
 	private static final int
 			REQUEST_INVITE = 43,
@@ -56,9 +47,9 @@ public class MenuFragment extends AbstractFragment implements
 
 
 	@Inject GoogleApiClient googleApiClient;
-	@InjectView(R.id.button_invite) Button inviteButton;
+	@Inject ConnectionManager connectionManager;
 
-	private Room connectedRoom = null;
+	@InjectView(R.id.button_invite) Button inviteButton;
 
 
 	public MenuFragment() {
@@ -79,17 +70,28 @@ public class MenuFragment extends AbstractFragment implements
 			}
 		});
 
+		// listen for incoming invitations
+		Games.Invitations.registerInvitationListener(googleApiClient, this);
+
 		// check for pending invitations
 		Invitation invitation = getArguments().getParcelable(EXTRA_INVITATION);
 		if (invitation != null) {
-			// accept invitation and start game
-			RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
-					.setMessageReceivedListener(this)
-					.setRoomStatusUpdateListener(new DummyRoomStatusUpdateListener());
-			roomConfigBuilder.setInvitationIdToAccept(invitation.getInvitationId());
-			Games.RealTimeMultiplayer.join(googleApiClient, roomConfigBuilder.build());
-			actionListener.onGameStarted();
+			connectionManager.acceptInvitation(invitation);
 		}
+	}
+
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		connectionManager.registerConnectionListener(this);
+	}
+
+
+	@Override
+	public void onPause() {
+		connectionManager.unregisterConnectionListener();
+		super.onPause();
 	}
 
 
@@ -106,23 +108,7 @@ public class MenuFragment extends AbstractFragment implements
 				int minAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
 				int maxAutoMatchPlayers = data.getIntExtra(Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
 
-				Bundle autoMatchCriteria = null;
-				if (minAutoMatchPlayers > 0) {
-					autoMatchCriteria = RoomConfig.createAutoMatchCriteria(minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-				} else {
-					autoMatchCriteria = null;
-				}
-
-				// create the room and specify a variant if appropriate
-				RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
-						.setMessageReceivedListener(this)
-						.setRoomStatusUpdateListener(new DummyRoomStatusUpdateListener());
-				roomConfigBuilder.addPlayersToInvite(invitees);
-				if (autoMatchCriteria != null) {
-					roomConfigBuilder.setAutoMatchCriteria(autoMatchCriteria);
-				}
-				RoomConfig roomConfig = roomConfigBuilder.build();
-				Games.RealTimeMultiplayer.create(googleApiClient, roomConfig);
+				connectionManager.invitePlayers(invitees, minAutoMatchPlayers, maxAutoMatchPlayers);
 				break;
 
 			case REQUEST_WAITING_ROOM:
@@ -135,101 +121,18 @@ public class MenuFragment extends AbstractFragment implements
 				if (response == Activity.RESULT_CANCELED || response == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
 					Timber.d("leaving room ...");
 					// leave room
-					Games.RealTimeMultiplayer.leave(googleApiClient, null, connectedRoom.getRoomId());
+					Games.RealTimeMultiplayer.leave(googleApiClient, null, connectionManager.getConnectedRoom().getRoomId());
 				}
 				break;
 		}
 	}
 
 
-	@Override
-	public void onConnected(Bundle bundle) {
-		// TODO
-		Games.Invitations.registerInvitationListener(googleApiClient, this);
-	}
-
-
-	@Override
-	public void onConnectionSuspended(int i) {
-		// TODO
-	}
-
-
-	@Override
-	public void onStart() {
-		super.onStart();
-		googleApiClient.registerConnectionCallbacks(this);
-		googleApiClient.connect();
-	}
-
-
-	@Override
-	public void onStop() {
-		googleApiClient.disconnect();
-		googleApiClient.unregisterConnectionCallbacks(this);
-		super.onStop();
-	}
-
-
-	@Override
-	public void onRoomCreated(int statusCode, Room room) {
-		this.connectedRoom = room;
-		if (!onRoomUpdate("onRoomCreated", statusCode)) return;
-		// get waiting room intent
-		Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(googleApiClient, room, Integer.MAX_VALUE);
-		startActivityForResult(intent, REQUEST_WAITING_ROOM);
-
-	}
-
-
-	@Override
-	public void onJoinedRoom(int statusCode, Room room) {
-		this.connectedRoom = room;
-		if (!onRoomUpdate("onJoinedRoom", statusCode)) return;
-		// get waiting room intent
-		Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(googleApiClient, room, Integer.MAX_VALUE);
-		startActivityForResult(intent, REQUEST_WAITING_ROOM);
-	}
-
-
-	@Override
-	public void onLeftRoom(int statusCode, String s) {
-		onRoomUpdate("onLeftRoom", statusCode);
-	}
-
-
-	@Override
-	public void onRoomConnected(int statusCode, Room room) {
-		this.connectedRoom = room;
-		onRoomUpdate("onRoomConnected", statusCode);
-	}
-
-
-	public boolean onRoomUpdate(String updateType, int statusCode) {
-		if (statusCode != GamesStatusCodes.STATUS_OK) {
-			Timber.e(updateType + " error (" + statusCode + ")");
-			return false;
-		} else {
-			Timber.d(updateType + " success");
-			return true;
-		}
-	}
-
-
-	@Override
-	public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
-		Timber.d("onRealTimeMessageReceived");
-	}
-
 
 	@Override
 	public void onInvitationReceived(Invitation invitation) {
 		Timber.d("Invitation received");
-		RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
-				.setMessageReceivedListener(this)
-				.setRoomStatusUpdateListener(new DummyRoomStatusUpdateListener());
-		roomConfigBuilder.setInvitationIdToAccept(invitation.getInvitationId());
-		Games.RealTimeMultiplayer.join(googleApiClient, roomConfigBuilder.build());
+		connectionManager.acceptInvitation(invitation);
 	}
 
 
@@ -239,65 +142,14 @@ public class MenuFragment extends AbstractFragment implements
 	}
 
 
-	private class DummyRoomStatusUpdateListener implements RoomStatusUpdateListener {
-		@Override
-		public void onRoomConnecting(Room room) {
-			Timber.d("onRoomConnection");
-		}
-
-		@Override
-		public void onRoomAutoMatching(Room room) {
-			Timber.d("onRoomAutoMatching");
-		}
-
-		@Override
-		public void onPeerInvitedToRoom(Room room, List<String> list) {
-			Timber.d("onPeerInvitedToRoom");
-		}
-
-		@Override
-		public void onPeerDeclined(Room room, List<String> list) {
-			Timber.d("onPeerDeclined");
-		}
-
-		@Override
-		public void onPeerJoined(Room room, List<String> list) {
-			Timber.d("onPeerJoined");
-		}
-
-		@Override
-		public void onPeerLeft(Room room, List<String> list) {
-			Timber.d("onPeerLeft");
-		}
-
-		@Override
-		public void onConnectedToRoom(Room room) {
-			Timber.d("onConnectedToRoom");
-		}
-
-		@Override
-		public void onDisconnectedFromRoom(Room room) {
-			Timber.d("onDisconnectedFromRoom");
-		}
-
-		@Override
-		public void onPeersConnected(Room room, List<String> list) {
-			Timber.d("onPeersConnected");
-		}
-
-		@Override
-		public void onPeersDisconnected(Room room, List<String> list) {
-			Timber.d("onPeersDisconnected");
-		}
-
-		@Override
-		public void onP2PConnected(String s) {
-			Timber.d("onP2PConnected");
-		}
-
-		@Override
-		public void onP2PDisconnected(String s) {
-			Timber.d("onP2PDisconnected");
-		}
+	@Override
+	public void showWaitingRoom(Intent waitingRoomIntent) {
+		startActivityForResult(waitingRoomIntent, REQUEST_WAITING_ROOM);
 	}
+
+	@Override
+	public void onConnectionLost() {
+		// nothing to do here ...
+	}
+
 }
