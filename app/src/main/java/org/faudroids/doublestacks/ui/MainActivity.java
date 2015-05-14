@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -36,6 +37,9 @@ public class MainActivity extends RoboActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
+		Timber.d("connecting to google api client");
+		// prevent lost connection when screen sleeps
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		googleApiClient.registerConnectionCallbacks(this);
 		googleApiClient.registerConnectionFailedListener(this);
 		googleApiClient.connect();
@@ -44,9 +48,11 @@ public class MainActivity extends RoboActivity implements
 
 	@Override
 	public void onStop() {
+		Timber.d("disconnecting from google api client");
 		googleApiClient.disconnect();
 		googleApiClient.unregisterConnectionCallbacks(this);
 		googleApiClient.unregisterConnectionFailedListener(this);
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		super.onStop();
 	}
 

@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -96,9 +95,6 @@ public class MenuFragment extends AbstractFragment implements
 				}
 				RoomConfig roomConfig = roomConfigBuilder.build();
 				Games.RealTimeMultiplayer.create(googleApiClient, roomConfig);
-
-				// prevent screen from sleeping during handshake
-				getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 				break;
 
 			case REQUEST_WAITING_ROOM:
@@ -112,7 +108,6 @@ public class MenuFragment extends AbstractFragment implements
 					Timber.d("leaving room ...");
 					// leave room
 					Games.RealTimeMultiplayer.leave(googleApiClient, null, connectedRoom.getRoomId());
-					getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 				}
 				break;
 		}
@@ -153,7 +148,7 @@ public class MenuFragment extends AbstractFragment implements
 		this.connectedRoom = room;
 		if (!onRoomUpdate("onRoomCreated", statusCode)) return;
 		// get waiting room intent
-		Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(googleApiClient, room, 2);
+		Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(googleApiClient, room, Integer.MAX_VALUE);
 		startActivityForResult(intent, REQUEST_WAITING_ROOM);
 
 	}
@@ -164,7 +159,7 @@ public class MenuFragment extends AbstractFragment implements
 		this.connectedRoom = room;
 		if (!onRoomUpdate("onJoinedRoom", statusCode)) return;
 		// get waiting room intent
-		Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(googleApiClient, room, 2);
+		Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(googleApiClient, room, Integer.MAX_VALUE);
 		startActivityForResult(intent, REQUEST_WAITING_ROOM);
 	}
 
@@ -184,8 +179,6 @@ public class MenuFragment extends AbstractFragment implements
 
 	public boolean onRoomUpdate(String updateType, int statusCode) {
 		if (statusCode != GamesStatusCodes.STATUS_OK) {
-			// let screen go to sleep
-			getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			Timber.e(updateType + " error (" + statusCode + ")");
 			return false;
 		} else {
@@ -209,9 +202,6 @@ public class MenuFragment extends AbstractFragment implements
 				.setRoomStatusUpdateListener(new DummyRoomStatusUpdateListener());
 		roomConfigBuilder.setInvitationIdToAccept(invitation.getInvitationId());
 		Games.RealTimeMultiplayer.join(googleApiClient, roomConfigBuilder.build());
-
-		// prevent screen from sleeping during handshake
-		getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 
