@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="field_width">500dp</dimen>
+    <dimen name="field_height">800dp</dimen>
+</resources>

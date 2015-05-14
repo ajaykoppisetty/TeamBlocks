@@ -41,8 +41,8 @@
         <SurfaceView
             android:id="@+id/surface_view"
             android:layout_marginTop="20dp"
-            android:layout_width="200dp"
-            android:layout_height="320dp"
+            android:layout_width="@dimen/field_width"
+            android:layout_height="@dimen/field_height"
             android:layout_gravity="center_horizontal"
             />
 
