@@ -147,8 +147,27 @@ public class MenuFragment extends AbstractFragment implements
 		startActivityForResult(waitingRoomIntent, REQUEST_WAITING_ROOM);
 	}
 
+
 	@Override
 	public void onConnectionLost() {
+		// nothing to do here ...
+	}
+
+
+	@Override
+	public void onReliableMsgSendError() {
+		// nothing to do here ...
+	}
+
+
+	@Override
+	public void onReliableMsg(String msg) {
+		// nothing to do here ...
+	}
+
+
+	@Override
+	public void onUnreliableMsg(String msg) {
 		// nothing to do here ...
 	}
 

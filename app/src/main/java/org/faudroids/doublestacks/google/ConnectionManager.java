@@ -10,6 +10,7 @@ import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer;
 import com.google.android.gms.games.multiplayer.realtime.Room;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
@@ -28,11 +29,14 @@ public class ConnectionManager {
 
 	private final CustomRoomUpdateListener roomUpdateListener = new CustomRoomUpdateListener();
 	private final CustomMessageListeners messageListeners = new CustomMessageListeners();
-	private final DummyRoomStatusUpdateListener roomStatusUpdateListener = new DummyRoomStatusUpdateListener();
+	private final CustomRoomStatusUpdateListener roomStatusUpdateListener = new CustomRoomStatusUpdateListener();
+	private final CustomMessageSentCallback messageSentCallback = new CustomMessageSentCallback();
 
 	private final GoogleApiClient googleApiClient;
 
+	private Room connectedRoom = null;
 	private ConnectionListener connectionListener = null;
+
 
 	@Inject
 	ConnectionManager(GoogleApiClient googleApiClient) {
@@ -66,12 +70,36 @@ public class ConnectionManager {
 
 
 	public void leaveRoom() {
-		Games.RealTimeMultiplayer.leave(googleApiClient, roomUpdateListener, roomUpdateListener.connectedRoom.getRoomId());
+		Games.RealTimeMultiplayer.leave(googleApiClient, roomUpdateListener, connectedRoom.getRoomId());
 	}
 
 
 	public Room getConnectedRoom() {
-		return roomUpdateListener.connectedRoom;
+		return connectedRoom;
+	}
+
+
+	public void sendMessage(String msg, boolean reliable) {
+		ArrayList<String> participantsIds = connectedRoom.getParticipantIds();
+		String myId = connectedRoom.getParticipantId(Games.Players.getCurrentPlayerId(googleApiClient));
+		for (String id : participantsIds) {
+			if (myId.equals(id)) continue;
+			if (reliable) {
+				Games.RealTimeMultiplayer.sendReliableMessage(
+						googleApiClient,
+						messageSentCallback,
+						msg.getBytes(),
+						connectedRoom.getRoomId(),
+						id);
+			} else {
+				Games.RealTimeMultiplayer.sendUnreliableMessage(
+						googleApiClient,
+						msg.getBytes(),
+						connectedRoom.getRoomId(),
+						id);
+			}
+
+		}
 	}
 
 
@@ -97,17 +125,29 @@ public class ConnectionManager {
 
 		void showWaitingRoom(Intent waitingRoomIntent);
 		void onConnectionLost();
+		void onReliableMsgSendError();
+		void onReliableMsg(String msg);
+		void onUnreliableMsg(String msg);
+	}
+
+
+	private class CustomMessageSentCallback implements RealTimeMultiplayer.ReliableMessageSentCallback {
+
+		@Override
+		public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId) {
+			if (statusCode == GamesStatusCodes.STATUS_OK) return;
+			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_MESSAGE_SEND_FAILED) connectionListener.onReliableMsgSendError();
+			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_ROOM_NOT_JOINED) Timber.w("trying to send msg to unregister player");
+		}
 
 	}
 
 
 	private class CustomRoomUpdateListener implements RoomUpdateListener {
 
-		private Room connectedRoom = null;
-
 		@Override
 		public void onRoomCreated(int statusCode, Room room) {
-			this.connectedRoom = room;
+			connectedRoom = room;
 			if (!onRoomUpdate("onRoomCreated", statusCode)) return;
 			showWaitingRoom();
 		}
@@ -115,7 +155,7 @@ public class ConnectionManager {
 
 		@Override
 		public void onJoinedRoom(int statusCode, Room room) {
-			this.connectedRoom = room;
+			connectedRoom = room;
 			if (!onRoomUpdate("onJoinedRoom", statusCode)) return;
 			showWaitingRoom();
 		}
@@ -123,14 +163,14 @@ public class ConnectionManager {
 
 		@Override
 		public void onLeftRoom(int statusCode, String s) {
-			this.connectedRoom = null;
+			connectedRoom = null;
 			onRoomUpdate("onLeftRoom", statusCode);
 		}
 
 
 		@Override
 		public void onRoomConnected(int statusCode, Room room) {
-			this.connectedRoom = room;
+			connectedRoom = room;
 			onRoomUpdate("onRoomConnected", statusCode);
 		}
 
@@ -159,13 +199,15 @@ public class ConnectionManager {
 
 		@Override
 		public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
-			Timber.d("on real time message");
+			String msg = new String(realTimeMessage.getMessageData());
+			if (realTimeMessage.isReliable()) connectionListener.onReliableMsg(msg);
+			else connectionListener.onUnreliableMsg(msg);
 		}
 
 	}
 
 
-	private class DummyRoomStatusUpdateListener implements RoomStatusUpdateListener {
+	private class CustomRoomStatusUpdateListener implements RoomStatusUpdateListener {
 		@Override
 		public void onRoomConnecting(Room room) {
 			Timber.d("onRoomConnection");
@@ -187,7 +229,7 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public void onPeerJoined(Room room, List<String> list) {
+		public void onPeerJoined(Room room, List<String> paricipantsIds) {
 			Timber.d("onPeerJoined");
 		}
 
@@ -208,12 +250,12 @@ public class ConnectionManager {
 		}
 
 		@Override
-		public void onPeersConnected(Room room, List<String> list) {
+		public void onPeersConnected(Room room, List<String> participantIds) {
 			Timber.d("onPeersConnected");
 		}
 
 		@Override
-		public void onPeersDisconnected(Room room, List<String> list) {
+		public void onPeersDisconnected(Room room, List<String> participantIds) {
 			Timber.d("onPeersDisconnected");
 		}
 
