@@ -2,6 +2,7 @@ package org.faudroids.doublestacks.ui;
 
 public interface ActionListener {
 
-	public void onLoginClicked();
+	void onLoginClicked();
+	void onGameStarted();
 
 }

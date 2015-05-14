@@ -104,6 +104,7 @@ public class MenuFragment extends AbstractFragment implements
 			case REQUEST_WAITING_ROOM:
 				if (response == Activity.RESULT_OK) {
 					Timber.d("all players connected, starting game ...");
+					actionListener.onGameStarted();
 					return;
 				}
 

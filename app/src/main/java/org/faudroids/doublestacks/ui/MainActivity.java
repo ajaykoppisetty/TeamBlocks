@@ -95,13 +95,6 @@ public class MainActivity extends RoboActivity implements
 
 
 	@Override
-	public void onLoginClicked() {
-		loginClicked = true;
-		googleApiClient.connect();
-	}
-
-
-	@Override
 	public void onActivityResult(int request, int response, Intent data) {
 		switch (request) {
 			case REQUEST_LOGIN:
@@ -111,6 +104,19 @@ public class MainActivity extends RoboActivity implements
 					googleApiClient.connect();
 				}
 		}
+	}
+
+
+	@Override
+	public void onLoginClicked() {
+		loginClicked = true;
+		googleApiClient.connect();
+	}
+
+
+	@Override
+	public void onGameStarted() {
+		showFragment(new GameFragment(), true);
 	}
 
 
