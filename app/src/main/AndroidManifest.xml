@@ -19,13 +19,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".FullscreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme"
-            />
-
         <meta-data
             android:name="roboguice.annotations.packages"
             android:value="roboguice,org.faudroids.doublestacks"
