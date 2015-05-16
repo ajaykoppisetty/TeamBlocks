@@ -11,19 +11,27 @@ if [ "$#" -ne 2 ]; then
 fi
 
 outdir="../src/main/res/drawable"
-dpi=75
+dpi_regular=60
+dpi_large=75
+dpi_xlarge=112.5
 
 
 
-export $dpi $outdir-mdpi/$2 $1
-export $(echo "scale=2; $dpi*1.5" | bc) $outdir-hdpi/$2 $1
-export $(echo "scale=2; $dpi*2" | bc) $outdir-xhdpi/$2 $1
-export $(echo "scale=2; $dpi*3" | bc) $outdir-xxhdpi/$2 $1
+export $dpi_regular $outdir-mdpi/$2 $1
+export $(echo "scale=2; $dpi_regular*1.5" | bc) $outdir-hdpi/$2 $1
+export $(echo "scale=2; $dpi_regular*2" | bc) $outdir-xhdpi/$2 $1
+export $(echo "scale=2; $dpi_regular*3" | bc) $outdir-xxhdpi/$2 $1
 
 echo
 
-export $dpi $outdir-xlarge-mdpi/$2 $1
-export $(echo "scale=2; $dpi*1.5*1.5" | bc) $outdir-xlarge-hdpi/$2 $1
-export $(echo "scale=2; $dpi*2*1.5" | bc) $outdir-xlarge-xhdpi/$2 $1
-export $(echo "scale=2; $dpi*3*1.5" | bc) $outdir-xlarge-xxhdpi/$2 $1
+export $dpi_large $outdir-sw340-mdpi/$2 $1
+export $(echo "scale=2; $dpi_large*1.5" | bc) $outdir-sw340-hdpi/$2 $1
+export $(echo "scale=2; $dpi_large*2" | bc) $outdir-sw340-xhdpi/$2 $1
+export $(echo "scale=2; $dpi_large*3" | bc) $outdir-sw340-xxhdpi/$2 $1
 
+echo
+
+export $dpi_xlarge $outdir-sw600-mdpi/$2 $1
+export $(echo "scale=2; $dpi_xlarge*1.5" | bc) $outdir-sw600-hdpi/$2 $1
+export $(echo "scale=2; $dpi_xlarge*2" | bc) $outdir-sw600-xhdpi/$2 $1
+export $(echo "scale=2; $dpi_xlarge*3" | bc) $outdir-sw600-xxhdpi/$2 $1

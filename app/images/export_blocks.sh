@@ -4,8 +4,10 @@ svg_file=blocks.svg
 block_size=30
 x_count=5
 outdir="../src/main/res/drawable"
-dpi=75
-xlarge=1.5
+
+dpi_regluar=60
+dpi_large=75
+dpi_xlarge=112.5
 
 function export {
 	for x in `seq 0 $x_count`
@@ -28,15 +30,21 @@ function export {
 }
 
 
-export $dpi $outdir-mdpi
-export $(echo "scale=2; $dpi*1.5" | bc) $outdir-hdpi
-export $(echo "scale=2; $dpi*2" | bc) $outdir-xhdpi
-export $(echo "scale=2; $dpi*3" | bc) $outdir-xxhdpi
+export $dpi_regluar $outdir-mdpi
+export $(echo "scale=2; $dpi_regluar*1.5" | bc) $outdir-hdpi
+export $(echo "scale=2; $dpi_regluar*2" | bc) $outdir-xhdpi
+export $(echo "scale=2; $dpi_regluar*3" | bc) $outdir-xxhdpi
 
 echo
 
+export $dpi_large $outdir-sw340-mdpi
+export $(echo "scale=2; $dpi_large*1.5" | bc) $outdir-sw340-hdpi
+export $(echo "scale=2; $dpi_large*2" | bc) $outdir-sw340-xhdpi
+export $(echo "scale=2; $dpi_large*3" | bc) $outdir-sw340-xxhdpi
 
-export $dpi $outdir-xlarge-mdpi
-export $(echo "scale=2; $dpi*1.5*$xlarge" | bc) $outdir-xlarge-hdpi
-export $(echo "scale=2; $dpi*2*$xlarge" | bc) $outdir-xlarge-xhdpi
-export $(echo "scale=2; $dpi*3*$xlarge" | bc) $outdir-xlarge-xxhdpi
+echo
+
+export $dpi_xlarge $outdir-sw600-mdpi
+export $(echo "scale=2; $dpi_xlarge*1.5" | bc) $outdir-sw600-hdpi
+export $(echo "scale=2; $dpi_xlarge*2" | bc) $outdir-sw600-xhdpi
+export $(echo "scale=2; $dpi_xlarge*3" | bc) $outdir-sw600-xxhdpi
