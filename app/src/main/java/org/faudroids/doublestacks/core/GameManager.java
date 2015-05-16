@@ -17,7 +17,7 @@ public class GameManager {
 	GameManager() {
 		// some blocks for testing
 		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
+			for (int y = 0; y < Constants.BLOCKS_COUNT_Y - 5; ++y) {
 				int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
 				BlockType blockType = BlockType.COMBINED;
 				double random = Math.random();

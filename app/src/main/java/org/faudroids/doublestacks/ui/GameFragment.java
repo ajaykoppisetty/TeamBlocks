@@ -33,6 +33,7 @@ public class GameFragment extends AbstractFragment implements
 
 	@Inject private ConnectionManager connectionManager;
 	@Inject private GameManager gameManager;
+	@Inject private BitmapManager bitmapManager;
 	private GraphicsManager graphicsManager = null;
 
 	private boolean sendingMsgs = true;
@@ -122,7 +123,7 @@ public class GameFragment extends AbstractFragment implements
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		this.surfaceHolder = holder;
-		this.graphicsManager = new GraphicsManager(surfaceHolder, gameManager, getResources());
+		this.graphicsManager = new GraphicsManager(surfaceHolder, gameManager, bitmapManager, getResources());
 		this.graphicsManager.redrawGraphics();
 	}
 

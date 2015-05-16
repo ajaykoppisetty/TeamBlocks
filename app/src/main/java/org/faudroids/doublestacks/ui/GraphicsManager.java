@@ -3,7 +3,6 @@ package org.faudroids.doublestacks.ui;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
@@ -14,17 +13,22 @@ import org.faudroids.doublestacks.core.GameManager;
 
 class GraphicsManager {
 
+	private static final Paint BITMAP_PAINT = new Paint(Paint.FILTER_BITMAP_FLAG);
+
 	private final SurfaceHolder surfaceHolder;
 	private final GameManager gameManager;
-	private final BlockBitmaps blockBitmaps;
+	private final BitmapManager bitmapManager;
 
-	private final Paint dummyPaint = new Paint();
+	public GraphicsManager(
+			SurfaceHolder surfaceHolder,
+			GameManager gameManager,
+			BitmapManager bitmapManager,
+			Resources resources) {
 
-	public GraphicsManager(SurfaceHolder surfaceHolder, GameManager gameManager, Resources resources) {
 		this.surfaceHolder = surfaceHolder;
 		this.gameManager = gameManager;
-		this.dummyPaint.setColor(Color.BLUE);
-		this.blockBitmaps = BlockBitmaps.load(resources);
+		this.bitmapManager = bitmapManager;
+		bitmapManager.load(resources);
 	}
 
 
@@ -32,7 +36,10 @@ class GraphicsManager {
 		Canvas canvas = surfaceHolder.lockCanvas();
 		canvas.drawColor(0, PorterDuff.Mode.CLEAR); // clear screen
 
-		// update graphics
+		// update background
+		canvas.drawBitmap(bitmapManager.getBlocksBackground(), 0, 0, BITMAP_PAINT);
+
+		// update blocks
 		Block[][] field = gameManager.getField();
 		int xCount = field.length;
 		int yCount = field[0].length;
@@ -44,14 +51,14 @@ class GraphicsManager {
 				Block block = field[xPos][yPos];
 				if (block == null) continue;
 				canvas.drawBitmap(
-						blockBitmaps.getBitmap(block.getBlockType(), block.getBitmapType()),
+						bitmapManager.getBlocks().getBitmap(block.getBlockType(), block.getBitmapType()),
 						null,
 						new Rect(
 								xPos * xSize,
-								(yCount - yPos) * ySize,
+								(yCount - yPos - 1) * ySize,
 								(xPos + 1) * xSize,
-								(yCount - yPos + 1) * ySize),
-						new Paint(Paint.FILTER_BITMAP_FLAG));
+								(yCount - yPos) * ySize),
+						BITMAP_PAINT);
 			}
 		}
 
