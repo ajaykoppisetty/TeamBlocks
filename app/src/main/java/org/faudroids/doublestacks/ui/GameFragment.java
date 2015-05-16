@@ -122,8 +122,8 @@ public class GameFragment extends AbstractFragment implements
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		this.surfaceHolder = holder;
-		this.graphicsManager = new GraphicsManager(surfaceHolder, gameManager);
-		this.graphicsManager.redrawGraphis();
+		this.graphicsManager = new GraphicsManager(surfaceHolder, gameManager, getResources());
+		this.graphicsManager.redrawGraphics();
 	}
 
 

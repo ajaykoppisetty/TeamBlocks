@@ -10,20 +10,22 @@ public class GameManager {
 
 	// TODO put some awesome game logic here
 
-	private final Block[][] field = new Block[10][16];
+	private final Block[][] field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 
 
 	@Inject
 	GameManager() {
 		// some blocks for testing
-		field[0][0] = new Block();
-		field[1][2] = new Block();
-		field[0][2] = new Block();
-		field[2][2] = new Block();
-		field[2][4] = new Block();
-		field[9][15] = new Block();
-		field[9][0] = new Block();
-		field[0][15] = new Block();
+		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
+				int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
+				BlockType blockType = BlockType.COMBINED;
+				double random = Math.random();
+				if (random < 0.333) blockType = BlockType.PLAYER_1;
+				else if (random < 0.666) blockType = BlockType.PLAYER_2;
+				field[x][y] = new Block(bitmapType, blockType);
+			}
+		}
 	}
 
 
