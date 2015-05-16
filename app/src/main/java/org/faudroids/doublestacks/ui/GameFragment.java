@@ -9,7 +9,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.core.GameManager;
@@ -24,9 +23,7 @@ public class GameFragment extends AbstractFragment implements
 		ConnectionManager.ConnectionListener,
 		SurfaceHolder.Callback {
 
-	@InjectView(R.id.button_stop_game) private Button stopGameButton;
-	@InjectView(R.id.msgs_reliable) private TextView reliableMsgsView;
-	@InjectView(R.id.msgs_unreliable) private TextView unreliableMsgsView;
+	@InjectView(R.id.button_home) private Button homeButton;
 
 	@InjectView(R.id.surface_view) private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
@@ -49,7 +46,7 @@ public class GameFragment extends AbstractFragment implements
 		super.onViewCreated(view, savedInstanceState);
 
 		// setup ui
-		stopGameButton.setOnClickListener(new View.OnClickListener() {
+		homeButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				stopGame();
@@ -110,13 +107,13 @@ public class GameFragment extends AbstractFragment implements
 
 	@Override
 	public void onReliableMsg(String msg) {
-		reliableMsgsView.setText(msg);
+		// TODO
 	}
 
 
 	@Override
 	public void onUnreliableMsg(String msg) {
-		unreliableMsgsView.setText(msg);
+		// TODOa
 	}
 
 

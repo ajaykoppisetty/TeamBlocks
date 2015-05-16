@@ -7,7 +7,7 @@ public class Constants {
 
 	public static final int
 			BLOCKS_COUNT_X = 10,
-			BLOCKS_COUNT_Y = 16;
+			BLOCKS_COUNT_Y = 20;
 
 	public static final int
 			BLOCK_TYPE_COUNT = 6;

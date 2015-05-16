@@ -11,7 +11,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 outdir="../src/main/res/drawable"
-dpi=90
+dpi=75
 
 
 

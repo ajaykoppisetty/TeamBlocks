@@ -4,56 +4,109 @@
     android:layout_height="match_parent"
     >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="10dp"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         >
-
-        <TextView
-            android:text="Latest reliable msg:"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            />
-
-        <TextView
-            android:id="@+id/msgs_reliable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-        <TextView
-            android:text="Latest unreliable msg:"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textStyle="bold"
-            />
-
-        <TextView
-            android:id="@+id/msgs_unreliable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
 
         <SurfaceView
             android:id="@+id/surface_view"
-            android:layout_marginTop="20dp"
             android:layout_width="@dimen/field_width"
             android:layout_height="@dimen/field_height"
-            android:layout_gravity="center_horizontal"
             />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/text_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/surface_view"
+            android:layout_marginLeft="10dp"
+            android:text="12471"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            />
 
-    <Button
-        android:id="@+id/button_stop_game"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="Stop Game"
-        />
+        <ImageView
+            android:id="@+id/image_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/surface_view"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/text_score"
+            android:src="@drawable/blocks_preview"
+            />
+
+        <Button
+            android:id="@+id/button_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/surface_view"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/image_preview"
+            android:text="H"
+            />
+
+
+        <LinearLayout
+            android:id="@+id/layout_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/surface_view"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/button_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&lt;"
+                />
+
+            <Button
+                android:id="@+id/button_turn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="()"
+                />
+
+            <Button
+                android:id="@+id/button_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&gt;"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_bottom"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/button_down_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="v"
+                />
+
+            <Button
+                android:id="@+id/button_down_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="V"
+                />
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -4,7 +4,7 @@ svg_file=blocks.svg
 block_size=30
 x_count=5
 outdir="../src/main/res/drawable"
-dpi=90
+dpi=75
 xlarge=1.5
 
 function export {
