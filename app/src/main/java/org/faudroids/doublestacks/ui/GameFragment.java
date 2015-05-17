@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.core.GameManager;
-import org.faudroids.doublestacks.core.GameTickListener;
+import org.faudroids.doublestacks.core.GameUpdateListener;
 import org.faudroids.doublestacks.google.ConnectionManager;
 
 import java.io.Serializable;
@@ -24,9 +24,14 @@ import timber.log.Timber;
 public class GameFragment extends AbstractFragment implements
 		ConnectionManager.ConnectionListener,
 		SurfaceHolder.Callback,
-		GameTickListener {
+		GameUpdateListener {
 
 	@InjectView(R.id.button_home) private ImageButton homeButton;
+	@InjectView(R.id.button_left) private ImageButton leftButton;
+	@InjectView(R.id.button_right) private ImageButton rightButton;
+	@InjectView(R.id.button_turn) private ImageButton rotateButton;
+	@InjectView(R.id.button_down_one) private ImageButton downOneButton;
+	@InjectView(R.id.button_down_all) private ImageButton downAllButton;
 
 	@InjectView(R.id.surface_view) private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
@@ -53,6 +58,36 @@ public class GameFragment extends AbstractFragment implements
 				stopGame();
 			}
 		});
+		leftButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				gameManager.onLeftClicked();
+			}
+		});
+		rightButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				gameManager.onRightClicked();
+			}
+		});
+		rotateButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				gameManager.onRotateClicked();
+			}
+		});
+		downOneButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				gameManager.onOneDownClicked();
+			}
+		});
+		downAllButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				gameManager.onAllDownClicked();
+			}
+		});
 
 		// setup drawing area
 		SurfaceHolder holder = surfaceView.getHolder();
@@ -61,8 +96,7 @@ public class GameFragment extends AbstractFragment implements
 		holder.setFormat(PixelFormat.TRANSPARENT);
 
 		// start game
-		gameManager.registerGameTickListener(this);
-		gameManager.startGame();
+		gameManager.startGame(this);
 	}
 
 
@@ -124,7 +158,7 @@ public class GameFragment extends AbstractFragment implements
 
 
 	@Override
-	public void onGameTick() {
+	public void onRedrawGraphics() {
 		if (graphicsManager != null) graphicsManager.redrawGraphics();
 	}
 

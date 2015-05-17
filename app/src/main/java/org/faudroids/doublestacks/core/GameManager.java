@@ -7,8 +7,6 @@ import android.os.Looper;
 import org.faudroids.doublestacks.google.MessageSender;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -17,14 +15,16 @@ import timber.log.Timber;
 /**
  * Handles the core game logic.
  */
-public class GameManager implements GameTickListener {
+public class GameManager {
 
 	// TODO put some awesome game logic here
 
 	private final MessageSender messageSender;
 
-	private final Block[][] field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
-	private final GameTickRunnable tickRunnable = new GameTickRunnable();
+	private GameUpdateListener gameUpdateListener = null;
+
+	private Block[][] field = null;
+	private GameTickRunnable tickRunnable = null;
 
 	// TODO this should probably be a group at some point
 	private Block activeBlock = null;
@@ -42,14 +42,11 @@ public class GameManager implements GameTickListener {
 	}
 
 
-	public void registerGameTickListener(GameTickListener listener) {
-		tickRunnable.registerGameTickListener(listener);
-	}
-
-
-	public void startGame() {
+	public void startGame(GameUpdateListener gameUpdateListener) {
 		Timber.d("starting game");
-		tickRunnable.registerGameTickListener(this);
+		this.gameUpdateListener = gameUpdateListener;
+		this.field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
+		this.tickRunnable = new GameTickRunnable();
 		new Thread(tickRunnable).start();
 	}
 
@@ -57,14 +54,47 @@ public class GameManager implements GameTickListener {
 	public void stopGame() {
 		Timber.d("stopping game");
 		tickRunnable.stop();
+		this.gameUpdateListener = null;
+		this.field = null;
+		this.tickRunnable = null;
+	}
+
+
+	public void onLeftClicked() {
+		field[activeBlockXPos][activeBlockYPos] = null;
+		activeBlockXPos = Math.max(0, activeBlockXPos -1);
+		field[activeBlockXPos][activeBlockYPos] = activeBlock;
+		gameUpdateListener.onRedrawGraphics();
+	}
+
+
+	public void onRightClicked() {
+		field[activeBlockXPos][activeBlockYPos] = null;
+		activeBlockXPos = Math.min(Constants.BLOCKS_COUNT_X - 1, activeBlockXPos + 1);
+		field[activeBlockXPos][activeBlockYPos] = activeBlock;
+		gameUpdateListener.onRedrawGraphics();
+	}
+
+
+	public void onRotateClicked() {
+		// TODO awesome stuff goes here
+	}
+
+
+	public void onOneDownClicked() {
+		// TODO awesome stuff goes here
+	}
+
+
+	public void onAllDownClicked() {
+		// TODO awesome stuff goes here
 	}
 
 
 	/**
 	 * Called when sufficient time has passed that blocks should fall down.
 	 */
-	@Override
-	public void onGameTick() {
+	private void onGameTick() {
 		// update blocks
 		if (activeBlock == null) {
 			// create new block
@@ -93,6 +123,9 @@ public class GameManager implements GameTickListener {
 			}
 		}
 		messageSender.sendMessage(update, true);
+
+		// update listeners
+		gameUpdateListener.onRedrawGraphics();
 	}
 
 
@@ -124,19 +157,13 @@ public class GameManager implements GameTickListener {
 	/**
 	 * Alerts the {@link GameManager} about new time ticks.
 	 */
-	private static final class GameTickRunnable implements Runnable {
+	private final class GameTickRunnable implements Runnable {
 
 		private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
-		private final List<GameTickListener> listenerList = new ArrayList<>();
 		private volatile boolean running = true;
-
-		public void registerGameTickListener(GameTickListener listener) {
-			listenerList.add(listener);
-		}
 
 		public void stop() {
 			this.running = false;
-			this.listenerList.clear();
 		}
 
 		@Override
@@ -146,7 +173,7 @@ public class GameManager implements GameTickListener {
 					mainThreadHandler.post(new Runnable() {
 						@Override
 						public void run() {
-							for (GameTickListener listener : listenerList) listener.onGameTick();
+							onGameTick();
 						}
 					});
 					try {
