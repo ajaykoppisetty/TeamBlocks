@@ -17,6 +17,7 @@ import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.google.ConnectionManager;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -161,13 +162,7 @@ public class MenuFragment extends AbstractFragment implements
 
 
 	@Override
-	public void onReliableMsg(String msg) {
-		// nothing to do here ...
-	}
-
-
-	@Override
-	public void onUnreliableMsg(String msg) {
+	public void onMsg(Serializable data, boolean isReliable) {
 		// nothing to do here ...
 	}
 

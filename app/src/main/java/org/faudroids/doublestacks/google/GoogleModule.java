@@ -15,7 +15,7 @@ public class GoogleModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		// nothing to do for now ...
+		bind(MessageSender.class).to(ConnectionManager.class);
 	}
 
 	@Provides

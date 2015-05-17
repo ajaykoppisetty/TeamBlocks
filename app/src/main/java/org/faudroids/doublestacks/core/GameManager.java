@@ -4,6 +4,9 @@ package org.faudroids.doublestacks.core;
 import android.os.Handler;
 import android.os.Looper;
 
+import org.faudroids.doublestacks.google.MessageSender;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,8 @@ public class GameManager implements GameTickListener {
 
 	// TODO put some awesome game logic here
 
+	private final MessageSender messageSender;
+
 	private final Block[][] field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 	private final GameTickRunnable tickRunnable = new GameTickRunnable();
 
@@ -27,21 +32,8 @@ public class GameManager implements GameTickListener {
 
 
 	@Inject
-	GameManager() {
-		// TODO remove at some point
-		/*
-		// some blocks for testing
-		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-			for (int y = 0; y < Constants.BLOCKS_COUNT_Y - 5; ++y) {
-				int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
-				BlockType blockType = BlockType.COMBINED;
-				double random = Math.random();
-				if (random < 0.333) blockType = BlockType.PLAYER_1;
-				else if (random < 0.666) blockType = BlockType.PLAYER_2;
-				field[x][y] = new Block(bitmapType, blockType);
-			}
-		}
-		*/
+	GameManager(MessageSender messageSender) {
+		this.messageSender = messageSender;
 	}
 
 
@@ -73,9 +65,10 @@ public class GameManager implements GameTickListener {
 	 */
 	@Override
 	public void onGameTick() {
+		// update blocks
 		if (activeBlock == null) {
 			// create new block
-			activeBlock = createRandomBlock();
+			activeBlock = createRandomBlock(true);
 			activeBlockXPos = (int) (Math.random() * Constants.BLOCKS_COUNT_X);
 			activeBlockYPos = Constants.BLOCKS_COUNT_Y - 1;
 			field[activeBlockXPos][activeBlockYPos] = activeBlock;
@@ -87,16 +80,44 @@ public class GameManager implements GameTickListener {
 			field[activeBlockXPos][activeBlockYPos] = activeBlock;
 			if (activeBlockYPos == 0) activeBlock = null;
 		}
+
+		// send full field update
+		FullFieldUpdate update = new FullFieldUpdate();
+		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
+				Block block = field[x][y];
+				if (block == null) continue;
+				if (block.getBlockType().equals(BlockType.PLAYER_1) || block.getBlockType().equals(BlockType.COMBINED)) {
+					update.setBlock(x, y);
+				}
+			}
+		}
+		messageSender.sendMessage(update, true);
 	}
 
 
-	private Block createRandomBlock() {
+	public void onMsg(Serializable data, boolean isReliable) {
+		if (isReliable) {
+			// update complete player 2 field
+			FullFieldUpdate update = (FullFieldUpdate) data;
+			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+				for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
+					Block block = field[x][y];
+					if (update.hasBlock(x, y)) {
+						field[x][y] = createRandomBlock(false);
+					} else if (block != null && block.getBlockType().equals(BlockType.PLAYER_2)) {
+						field[x][y] = null;
+					}
+				}
+			}
+		}
+	}
+
+
+	private Block createRandomBlock(boolean player1) {
 		int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
-		BlockType blockType = BlockType.COMBINED;
-		double random = Math.random();
-		if (random < 0.333) blockType = BlockType.PLAYER_1;
-		else if (random < 0.666) blockType = BlockType.PLAYER_2;
-		return new Block(bitmapType, blockType);
+		if (player1) return new Block(bitmapType, BlockType.PLAYER_1);
+		else return new Block(bitmapType, BlockType.PLAYER_2);
 	}
 
 
@@ -122,7 +143,6 @@ public class GameManager implements GameTickListener {
 		public void run() {
 			try {
 				while (running) {
-					Timber.d("game tick");
 					mainThreadHandler.post(new Runnable() {
 						@Override
 						public void run() {

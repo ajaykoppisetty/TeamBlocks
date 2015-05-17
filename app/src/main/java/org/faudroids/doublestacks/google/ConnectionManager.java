@@ -16,6 +16,14 @@ import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +33,7 @@ import roboguice.inject.ContextSingleton;
 import timber.log.Timber;
 
 @ContextSingleton
-public class ConnectionManager {
+public class ConnectionManager implements MessageSender {
 
 	private final CustomRoomUpdateListener roomUpdateListener = new CustomRoomUpdateListener();
 	private final CustomMessageListeners messageListeners = new CustomMessageListeners();
@@ -79,7 +87,26 @@ public class ConnectionManager {
 	}
 
 
-	public void sendMessage(String msg, boolean reliable) {
+	@Override
+	public void sendMessage(Serializable data, boolean reliable) {
+		// serialize data
+		byte[] bytes = null;
+		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		try {
+			out = new ObjectOutputStream(byteOut);
+			out.writeObject(data);
+			bytes = byteOut.toByteArray();
+		} catch (IOException ioe) {
+			Timber.e(ioe, "failed serialize data");
+			return;
+		} finally {
+			try {
+				if (out != null) out.close();
+			} catch (IOException ex) {  }
+		}
+
+		// send bytes
 		ArrayList<String> participantsIds = connectedRoom.getParticipantIds();
 		String myId = connectedRoom.getParticipantId(Games.Players.getCurrentPlayerId(googleApiClient));
 		for (String id : participantsIds) {
@@ -88,13 +115,13 @@ public class ConnectionManager {
 				Games.RealTimeMultiplayer.sendReliableMessage(
 						googleApiClient,
 						messageSentCallback,
-						msg.getBytes(),
+						bytes,
 						connectedRoom.getRoomId(),
 						id);
 			} else {
 				Games.RealTimeMultiplayer.sendUnreliableMessage(
 						googleApiClient,
-						msg.getBytes(),
+						bytes,
 						connectedRoom.getRoomId(),
 						id);
 			}
@@ -126,8 +153,8 @@ public class ConnectionManager {
 		void showWaitingRoom(Intent waitingRoomIntent);
 		void onConnectionLost();
 		void onReliableMsgSendError();
-		void onReliableMsg(String msg);
-		void onUnreliableMsg(String msg);
+		void onMsg(Serializable data, boolean isReliable);
+
 	}
 
 
@@ -199,9 +226,23 @@ public class ConnectionManager {
 
 		@Override
 		public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
-			String msg = new String(realTimeMessage.getMessageData());
-			if (realTimeMessage.isReliable()) connectionListener.onReliableMsg(msg);
-			else connectionListener.onUnreliableMsg(msg);
+			// deserialize data
+			Serializable data = null;
+			ByteArrayInputStream byteIn = new ByteArrayInputStream(realTimeMessage.getMessageData());
+			ObjectInput in;
+			try {
+				in = new ObjectInputStream(byteIn);
+				data = (Serializable) in.readObject();
+			} catch (Exception ioe) {
+				Timber.e(ioe, "failed to deserialize data");
+			} finally {
+				try {
+					byteIn.close();
+				} catch (IOException ex) { }
+			}
+
+			// alert listener
+			connectionListener.onMsg(data, realTimeMessage.isReliable());
 		}
 
 	}

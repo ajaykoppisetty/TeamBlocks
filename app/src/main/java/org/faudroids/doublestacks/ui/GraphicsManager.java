@@ -35,7 +35,6 @@ class GraphicsManager {
 
 
 	public void redrawGraphics() {
-		Timber.d("redrawing graphics");
 		Canvas canvas = surfaceHolder.lockCanvas();
 		canvas.drawColor(0, PorterDuff.Mode.CLEAR); // clear screen
 

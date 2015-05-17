@@ -14,6 +14,8 @@ import org.faudroids.doublestacks.core.GameManager;
 import org.faudroids.doublestacks.core.GameTickListener;
 import org.faudroids.doublestacks.google.ConnectionManager;
 
+import java.io.Serializable;
+
 import javax.inject.Inject;
 
 import roboguice.inject.InjectView;
@@ -33,8 +35,6 @@ public class GameFragment extends AbstractFragment implements
 	@Inject private GameManager gameManager;
 	@Inject private BitmapManager bitmapManager;
 	private GraphicsManager graphicsManager = null;
-
-	private boolean sendingMsgs = true;
 
 
 	public GameFragment() {
@@ -63,20 +63,6 @@ public class GameFragment extends AbstractFragment implements
 		// start game
 		gameManager.registerGameTickListener(this);
 		gameManager.startGame();
-
-		// TODO remove at some point
-		// periodic msg sending (for testing)
-		/*
-		final Handler handler = new Handler(getActivity().getMainLooper());
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				connectionManager.sendMessage("Hello " + Math.random(), false);
-				connectionManager.sendMessage("World " + Math.random(), true);
-				if (sendingMsgs) handler.postDelayed(this, 1000);
-			}
-		}, 1000);
-		*/
 	}
 
 
@@ -90,7 +76,6 @@ public class GameFragment extends AbstractFragment implements
 	@Override
 	public void onPause() {
 		connectionManager.unregisterConnectionListener();
-		sendingMsgs = false;
 		super.onPause();
 	}
 
@@ -114,14 +99,8 @@ public class GameFragment extends AbstractFragment implements
 
 
 	@Override
-	public void onReliableMsg(String msg) {
-		// TODO
-	}
-
-
-	@Override
-	public void onUnreliableMsg(String msg) {
-		// TODO
+	public void onMsg(Serializable data, boolean isReliable) {
+		gameManager.onMsg(data, isReliable);
 	}
 
 
