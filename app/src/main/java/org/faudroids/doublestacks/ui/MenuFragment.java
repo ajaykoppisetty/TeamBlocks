@@ -140,8 +140,7 @@ public class MenuFragment extends AbstractFragment implements
 
 				if (response == Activity.RESULT_CANCELED || response == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
 					Timber.d("leaving room ...");
-					// leave room
-					Games.RealTimeMultiplayer.leave(googleApiClient, null, connectionManager.getConnectedRoom().getRoomId());
+					connectionManager.leaveRoom();
 				}
 				break;
 
