@@ -132,7 +132,8 @@
 
         </LinearLayout>
 
-
     </RelativeLayout>
+
+    <include layout="@layout/spinner"/>
 
 </RelativeLayout>
