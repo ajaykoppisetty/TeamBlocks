@@ -22,11 +22,13 @@ public class GameManager {
 	private GameUpdateListener gameUpdateListener = null;
 
 	private Block[][] field = null;
+	private int currentScore = 0;
 	private GameTickRunnable tickRunnable = null;
 
 	// TODO this should probably be a group at some point
 	private Block activeBlock = null;
 	private int activeBlockXPos, activeBlockYPos;
+
 
 
 	@Inject
@@ -37,6 +39,11 @@ public class GameManager {
 
 	public Block[][] getField() {
 		return field;
+	}
+
+
+	public int getCurrentScore() {
+		return currentScore;
 	}
 
 
@@ -63,7 +70,7 @@ public class GameManager {
 		activeBlockXPos = Math.max(0, activeBlockXPos -1);
 		field[activeBlockXPos][activeBlockYPos] = activeBlock;
 		sendUpdate(false);
-		gameUpdateListener.onRedrawGraphics();
+		gameUpdateListener.onFieldChanged();
 	}
 
 
@@ -72,7 +79,7 @@ public class GameManager {
 		activeBlockXPos = Math.min(Constants.BLOCKS_COUNT_X - 1, activeBlockXPos + 1);
 		field[activeBlockXPos][activeBlockYPos] = activeBlock;
 		sendUpdate(false);
-		gameUpdateListener.onRedrawGraphics();
+		gameUpdateListener.onFieldChanged();
 	}
 
 
@@ -114,8 +121,12 @@ public class GameManager {
 		// send full field update
 		sendUpdate(true);
 
+		// TODO remove this at some point
+		++currentScore;
+
 		// update listeners
-		gameUpdateListener.onRedrawGraphics();
+		gameUpdateListener.onFieldChanged();
+		gameUpdateListener.onScoreChanged();
 	}
 
 
@@ -138,7 +149,7 @@ public class GameManager {
 			}
 		}
 
-		gameUpdateListener.onRedrawGraphics();
+		gameUpdateListener.onFieldChanged();
 
 		// TODO remove full lines here BUT only is message is reliable!!
 	}

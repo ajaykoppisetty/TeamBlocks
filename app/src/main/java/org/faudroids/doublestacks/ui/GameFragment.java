@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.core.GameManager;
@@ -32,6 +33,8 @@ public class GameFragment extends AbstractFragment implements
 	@InjectView(R.id.button_turn) private ImageButton rotateButton;
 	@InjectView(R.id.button_down_one) private ImageButton downOneButton;
 	@InjectView(R.id.button_down_all) private ImageButton downAllButton;
+
+	@InjectView(R.id.text_score) private TextView scoreView;
 
 	@InjectView(R.id.surface_view) private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
@@ -158,8 +161,14 @@ public class GameFragment extends AbstractFragment implements
 
 
 	@Override
-	public void onRedrawGraphics() {
+	public void onFieldChanged() {
 		if (graphicsManager != null) graphicsManager.redrawGraphics();
+	}
+
+
+	@Override
+	public void onScoreChanged() {
+		scoreView.setText(String.valueOf(gameManager.getCurrentScore()));
 	}
 
 

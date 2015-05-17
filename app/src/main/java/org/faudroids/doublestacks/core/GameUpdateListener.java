@@ -2,6 +2,7 @@ package org.faudroids.doublestacks.core;
 
 public interface GameUpdateListener {
 
-	void onRedrawGraphics();
+	void onFieldChanged();
+	void onScoreChanged();
 
 }
