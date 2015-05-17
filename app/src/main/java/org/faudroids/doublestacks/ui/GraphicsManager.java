@@ -11,6 +11,8 @@ import android.view.SurfaceHolder;
 import org.faudroids.doublestacks.core.Block;
 import org.faudroids.doublestacks.core.GameManager;
 
+import timber.log.Timber;
+
 class GraphicsManager {
 
 	private static final Paint BITMAP_PAINT = new Paint(Paint.FILTER_BITMAP_FLAG);
@@ -33,6 +35,7 @@ class GraphicsManager {
 
 
 	public void redrawGraphics() {
+		Timber.d("redrawing graphics");
 		Canvas canvas = surfaceHolder.lockCanvas();
 		canvas.drawColor(0, PorterDuff.Mode.CLEAR); // clear screen
 

@@ -4,7 +4,6 @@ package org.faudroids.doublestacks.ui;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.ImageButton;
 
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.core.GameManager;
+import org.faudroids.doublestacks.core.GameTickListener;
 import org.faudroids.doublestacks.google.ConnectionManager;
 
 import javax.inject.Inject;
@@ -21,7 +21,8 @@ import timber.log.Timber;
 
 public class GameFragment extends AbstractFragment implements
 		ConnectionManager.ConnectionListener,
-		SurfaceHolder.Callback {
+		SurfaceHolder.Callback,
+		GameTickListener {
 
 	@InjectView(R.id.button_home) private ImageButton homeButton;
 
@@ -59,7 +60,13 @@ public class GameFragment extends AbstractFragment implements
 		surfaceView.setZOrderOnTop(true);
 		holder.setFormat(PixelFormat.TRANSPARENT);
 
+		// start game
+		gameManager.registerGameTickListener(this);
+		gameManager.startGame();
+
+		// TODO remove at some point
 		// periodic msg sending (for testing)
+		/*
 		final Handler handler = new Handler(getActivity().getMainLooper());
 		handler.postDelayed(new Runnable() {
 			@Override
@@ -69,6 +76,7 @@ public class GameFragment extends AbstractFragment implements
 				if (sendingMsgs) handler.postDelayed(this, 1000);
 			}
 		}, 1000);
+		*/
 	}
 
 
@@ -136,8 +144,15 @@ public class GameFragment extends AbstractFragment implements
 	}
 
 
+	@Override
+	public void onGameTick() {
+		if (graphicsManager != null) graphicsManager.redrawGraphics();
+	}
+
+
 	private void stopGame() {
 		connectionManager.leaveRoom();
 		actionListener.onGameStopped();
+		gameManager.stopGame();
 	}
 }
