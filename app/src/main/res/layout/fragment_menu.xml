@@ -18,6 +18,13 @@
         >
 
         <Button
+            android:id="@+id/button_quick_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quick match"
+            />
+
+        <Button
             android:id="@+id/button_invite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

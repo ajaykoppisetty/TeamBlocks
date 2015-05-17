@@ -51,6 +51,7 @@ public class MenuFragment extends AbstractFragment implements
 	@Inject GoogleApiClient googleApiClient;
 	@Inject ConnectionManager connectionManager;
 
+	@InjectView(R.id.button_quick_game) Button quickGameButton;
 	@InjectView(R.id.button_invite) Button inviteButton;
 	@InjectView(R.id.button_view_invitations) Button viewInvitationsButton;
 
@@ -64,6 +65,12 @@ public class MenuFragment extends AbstractFragment implements
 		super.onViewCreated(view, savedInstanceState);
 
 		// setup ui
+		quickGameButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				connectionManager.autoMatchPlayer();
+			}
+		});
 		inviteButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

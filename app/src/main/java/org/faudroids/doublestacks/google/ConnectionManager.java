@@ -77,6 +77,15 @@ public class ConnectionManager implements MessageSender {
 	}
 
 
+	public void autoMatchPlayer() {
+		Bundle am = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+		RoomConfig.Builder roomConfigBuilder = createDefaultRoomConfig();
+		roomConfigBuilder.setAutoMatchCriteria(am);
+		RoomConfig roomConfig = roomConfigBuilder.build();
+		Games.RealTimeMultiplayer.create(googleApiClient, roomConfig);
+	}
+
+
 	public void leaveRoom() {
 		Games.RealTimeMultiplayer.leave(googleApiClient, roomUpdateListener, connectedRoom.getRoomId());
 	}
