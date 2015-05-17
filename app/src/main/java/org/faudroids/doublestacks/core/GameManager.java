@@ -4,8 +4,6 @@ package org.faudroids.doublestacks.core;
 import android.os.Handler;
 import android.os.Looper;
 
-import org.faudroids.doublestacks.google.MessageSender;
-
 import java.io.Serializable;
 
 import javax.inject.Inject;
@@ -19,7 +17,7 @@ public class GameManager {
 
 	// TODO put some awesome game logic here
 
-	private final MessageSender messageSender;
+	private final MessageManager messageManager;
 
 	private GameUpdateListener gameUpdateListener = null;
 
@@ -32,8 +30,8 @@ public class GameManager {
 
 
 	@Inject
-	GameManager(MessageSender messageSender) {
-		this.messageSender = messageSender;
+	GameManager(MessageManager messageManager) {
+		this.messageManager = messageManager;
 	}
 
 
@@ -64,6 +62,7 @@ public class GameManager {
 		field[activeBlockXPos][activeBlockYPos] = null;
 		activeBlockXPos = Math.max(0, activeBlockXPos -1);
 		field[activeBlockXPos][activeBlockYPos] = activeBlock;
+		sendUpdate(false);
 		gameUpdateListener.onRedrawGraphics();
 	}
 
@@ -72,6 +71,7 @@ public class GameManager {
 		field[activeBlockXPos][activeBlockYPos] = null;
 		activeBlockXPos = Math.min(Constants.BLOCKS_COUNT_X - 1, activeBlockXPos + 1);
 		field[activeBlockXPos][activeBlockYPos] = activeBlock;
+		sendUpdate(false);
 		gameUpdateListener.onRedrawGraphics();
 	}
 
@@ -112,7 +112,40 @@ public class GameManager {
 		}
 
 		// send full field update
-		FullFieldUpdate update = new FullFieldUpdate();
+		sendUpdate(true);
+
+		// update listeners
+		gameUpdateListener.onRedrawGraphics();
+	}
+
+
+	public void onMsg(Serializable data, boolean isReliable) {
+		FieldUpdate update = (FieldUpdate) data;
+		if (!messageManager.receiveMessage(update, isReliable)) {
+			Timber.d("dropping msg (" + update.getEpoch() + ", " + update.getSeqNum() + ")");
+			return;
+		}
+
+		// update complete player 2 field
+		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
+				Block block = field[x][y];
+				if (update.hasBlock(x, y)) {
+					field[x][y] = createRandomBlock(false);
+				} else if (block != null && block.getBlockType().equals(BlockType.PLAYER_2)) {
+					field[x][y] = null;
+				}
+			}
+		}
+
+		gameUpdateListener.onRedrawGraphics();
+
+		// TODO remove full lines here BUT only is message is reliable!!
+	}
+
+
+	private void sendUpdate(boolean isReliable) {
+		FieldUpdate update = new FieldUpdate();
 		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
 			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
 				Block block = field[x][y];
@@ -122,28 +155,7 @@ public class GameManager {
 				}
 			}
 		}
-		messageSender.sendMessage(update, true);
-
-		// update listeners
-		gameUpdateListener.onRedrawGraphics();
-	}
-
-
-	public void onMsg(Serializable data, boolean isReliable) {
-		if (isReliable) {
-			// update complete player 2 field
-			FullFieldUpdate update = (FullFieldUpdate) data;
-			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-				for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
-					Block block = field[x][y];
-					if (update.hasBlock(x, y)) {
-						field[x][y] = createRandomBlock(false);
-					} else if (block != null && block.getBlockType().equals(BlockType.PLAYER_2)) {
-						field[x][y] = null;
-					}
-				}
-			}
-		}
+		messageManager.sendMessage(update, isReliable);
 	}
 
 
