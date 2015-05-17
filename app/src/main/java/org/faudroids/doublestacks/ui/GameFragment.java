@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.core.GameManager;
@@ -23,7 +23,7 @@ public class GameFragment extends AbstractFragment implements
 		ConnectionManager.ConnectionListener,
 		SurfaceHolder.Callback {
 
-	@InjectView(R.id.button_home) private Button homeButton;
+	@InjectView(R.id.button_home) private ImageButton homeButton;
 
 	@InjectView(R.id.surface_view) private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
@@ -113,7 +113,7 @@ public class GameFragment extends AbstractFragment implements
 
 	@Override
 	public void onUnreliableMsg(String msg) {
-		// TODOa
+		// TODO
 	}
 
 

@@ -37,14 +37,14 @@
             android:src="@drawable/blocks_preview"
             />
 
-        <Button
+        <ImageButton
             android:id="@+id/button_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/surface_view"
             android:layout_marginLeft="10dp"
             android:layout_below="@id/image_preview"
-            android:text="H"
+            android:background="@drawable/button_home_selector"
             />
 
 

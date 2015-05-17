@@ -24,14 +24,14 @@ export $(echo "scale=2; $dpi_regular*3" | bc) $outdir-xxhdpi/$2 $1
 
 echo
 
-export $dpi_large $outdir-sw340-mdpi/$2 $1
-export $(echo "scale=2; $dpi_large*1.5" | bc) $outdir-sw340-hdpi/$2 $1
-export $(echo "scale=2; $dpi_large*2" | bc) $outdir-sw340-xhdpi/$2 $1
-export $(echo "scale=2; $dpi_large*3" | bc) $outdir-sw340-xxhdpi/$2 $1
+export $dpi_large $outdir-sw340dp-mdpi/$2 $1
+export $(echo "scale=2; $dpi_large*1.5" | bc) $outdir-sw340dp-hdpi/$2 $1
+export $(echo "scale=2; $dpi_large*2" | bc) $outdir-sw340dp-xhdpi/$2 $1
+export $(echo "scale=2; $dpi_large*3" | bc) $outdir-sw340dp-xxhdpi/$2 $1
 
 echo
 
-export $dpi_xlarge $outdir-sw600-mdpi/$2 $1
-export $(echo "scale=2; $dpi_xlarge*1.5" | bc) $outdir-sw600-hdpi/$2 $1
-export $(echo "scale=2; $dpi_xlarge*2" | bc) $outdir-sw600-xhdpi/$2 $1
-export $(echo "scale=2; $dpi_xlarge*3" | bc) $outdir-sw600-xxhdpi/$2 $1
+export $dpi_xlarge $outdir-sw600dp-mdpi/$2 $1
+export $(echo "scale=2; $dpi_xlarge*1.5" | bc) $outdir-sw600dp-hdpi/$2 $1
+export $(echo "scale=2; $dpi_xlarge*2" | bc) $outdir-sw600dp-xhdpi/$2 $1
+export $(echo "scale=2; $dpi_xlarge*3" | bc) $outdir-sw600dp-xxhdpi/$2 $1
