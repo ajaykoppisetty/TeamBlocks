@@ -31,7 +31,8 @@ public class MenuFragment extends AbstractFragment implements
 
 	private static final int
 			REQUEST_INVITE = 43,
-			REQUEST_WAITING_ROOM = 44;
+			REQUEST_WAITING_ROOM = 44,
+			REQUEST_VIEW_INVITATIONS = 45;
 
 	private static final String EXTRA_INVITATION = "EXTRA_INVITATION";
 
@@ -51,6 +52,7 @@ public class MenuFragment extends AbstractFragment implements
 	@Inject ConnectionManager connectionManager;
 
 	@InjectView(R.id.button_invite) Button inviteButton;
+	@InjectView(R.id.button_view_invitations) Button viewInvitationsButton;
 
 
 	public MenuFragment() {
@@ -68,6 +70,12 @@ public class MenuFragment extends AbstractFragment implements
 				// launch the player selection screen
 				Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(googleApiClient, 1, 1);
 				startActivityForResult(intent, REQUEST_INVITE);
+			}
+		});
+		viewInvitationsButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showInvitations();
 			}
 		});
 
@@ -125,15 +133,24 @@ public class MenuFragment extends AbstractFragment implements
 					Games.RealTimeMultiplayer.leave(googleApiClient, null, connectionManager.getConnectedRoom().getRoomId());
 				}
 				break;
+
+			case REQUEST_VIEW_INVITATIONS:
+				// canceled
+				if (response != Activity.RESULT_OK) return;
+
+				// get and accept the selected invitation
+				Bundle extras = data.getExtras();
+				Invitation invitation = extras.getParcelable(Multiplayer.EXTRA_INVITATION);
+				connectionManager.acceptInvitation(invitation);
+				break;
 		}
 	}
-
 
 
 	@Override
 	public void onInvitationReceived(Invitation invitation) {
 		Timber.d("Invitation received");
-		connectionManager.acceptInvitation(invitation);
+		showInvitations();
 	}
 
 
@@ -164,6 +181,12 @@ public class MenuFragment extends AbstractFragment implements
 	@Override
 	public void onMsg(Serializable data, boolean isReliable) {
 		// nothing to do here ...
+	}
+
+
+	private void showInvitations() {
+		Intent intent = Games.Invitations.getInvitationInboxIntent(googleApiClient);
+		startActivityForResult(intent, REQUEST_VIEW_INVITATIONS);
 	}
 
 }

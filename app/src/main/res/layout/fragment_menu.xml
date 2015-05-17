@@ -11,11 +11,26 @@
         android:scaleType="centerCrop"
         />
 
-    <Button
-        android:id="@+id/button_invite"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Invite players"
-        />
+        android:orientation="vertical"
+        >
+
+        <Button
+            android:id="@+id/button_invite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Invite players"
+            />
+
+        <Button
+            android:id="@+id/button_view_invitations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Invitations"
+            />
+
+    </LinearLayout>
 
 </RelativeLayout>
