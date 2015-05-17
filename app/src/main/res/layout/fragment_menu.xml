@@ -12,30 +12,34 @@
         />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:orientation="vertical"
         >
 
         <Button
             android:id="@+id/button_quick_game"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Quick match"
+            android:text="@string/menu_quick_match"
+            style="@style/MenuButton"
             />
 
         <Button
             android:id="@+id/button_invite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Invite players"
+            android:text="@string/menu_invite_friends"
+            style="@style/MenuButton"
             />
 
         <Button
             android:id="@+id/button_view_invitations"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="View Invitations"
+            android:text="@string/menu_view_invitations"
+            style="@style/MenuButton"
+            />
+
+        <Button
+            android:id="@+id/button_settings"
+            android:text="@string/menu_settings"
+            style="@style/MenuButton"
             />
 
     </LinearLayout>
