@@ -134,7 +134,9 @@ public class GameManager {
 
 
 	public void onAllDownClicked() {
-		// TODO awesome stuff goes here
+		if (activeGroup == null) return;
+		while (moveActiveGroupDown()); // move all the way down
+		gameUpdateListener.onFieldChanged();
 	}
 
 
@@ -193,7 +195,10 @@ public class GameManager {
 	}
 
 
-	private void moveActiveGroupDown() {
+	/**
+	 * @return true if the block has moved, false otherwise (touchdown!)
+	 */
+	private boolean moveActiveGroupDown() {
 		boolean touchdown = false;
 		if (activeGroup.getyPos() == 0) {
 			touchdown = true;
@@ -219,10 +224,12 @@ public class GameManager {
 				}
 			}
 			activeGroup = null;
+			return false;
 
 		} else {
 			// move group down
 			activeGroup.setyPos(activeGroup.getyPos() - 1);
+			return true;
 		}
 	}
 
