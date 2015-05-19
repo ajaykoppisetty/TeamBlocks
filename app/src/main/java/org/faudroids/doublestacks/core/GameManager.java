@@ -148,7 +148,7 @@ public class GameManager {
 			Timber.d("Creating new group");
 			// create new group
 			activeGroup = BlockGroup.createRandom();
-			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - 1 - activeGroup.getYSize());
+			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - activeGroup.getYSize());
 			int xPos = (Constants.BLOCKS_COUNT_X - activeGroup.getXSize()) / 2;
 			activeGroup.setxPos(xPos);
 
