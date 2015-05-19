@@ -109,8 +109,13 @@ public class GameManager {
 		if (activeGroup == null) return;
 
 		// check field
-		BlockGroup rotatedGroup = activeGroup.roate();
+		BlockGroup rotatedGroup = activeGroup.rotate();
 		for (Location blockLocation : rotatedGroup.getAbsoluteLocations()) {
+			if (blockLocation.x < 0 || blockLocation.x >= Constants.BLOCKS_COUNT_X ||
+					blockLocation.y < 0 || blockLocation.y >= Constants.BLOCKS_COUNT_Y) {
+				return;
+			}
+
 			if (field[blockLocation.x][blockLocation.y] != null) return;
 		}
 
@@ -140,7 +145,7 @@ public class GameManager {
 		if (activeGroup == null) {
 			Timber.d("Creating new group");
 			// create new group
-			activeGroup = createRandomGroup();
+			activeGroup = BlockGroup.createRandom();
 			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - 1 - activeGroup.getYSize());
 			int xPos = (Constants.BLOCKS_COUNT_X - activeGroup.getXSize()) / 2;
 			activeGroup.setxPos(xPos);
@@ -236,19 +241,6 @@ public class GameManager {
 		}
 		messageManager.sendMessage(update, isReliable);
 		*/
-	}
-
-
-	private BlockGroup createRandomGroup() {
-		// TODO random!!
-		return BlockGroup.createL();
-	}
-
-
-	private Block createRandomBlock(boolean player1) {
-		int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
-		if (player1) return new Block(bitmapType, BlockType.PLAYER_1);
-		else return new Block(bitmapType, BlockType.PLAYER_2);
 	}
 
 

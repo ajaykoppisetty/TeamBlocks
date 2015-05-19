@@ -25,12 +25,22 @@ public class BlockGroup {
 
 
 	public static BlockGroup createLMirrored() {
-		return null;
+		Block[][] blocks = new Block[2][3];
+		blocks[0][0] = createRandomBlock();
+		blocks[1][0] = createRandomBlock();
+		blocks[1][1] = createRandomBlock();
+		blocks[1][2] = createRandomBlock();
+		return new BlockGroup(blocks);
 	}
 
 
 	public static BlockGroup createI() {
-		return null;
+		Block[][] blocks = new Block[1][4];
+		blocks[0][0] = createRandomBlock();
+		blocks[0][1] = createRandomBlock();
+		blocks[0][2] = createRandomBlock();
+		blocks[0][3] = createRandomBlock();
+		return new BlockGroup(blocks);
 	}
 
 
@@ -45,6 +55,58 @@ public class BlockGroup {
 	}
 
 
+	public static BlockGroup createS() {
+		Block[][] blocks = new Block[3][2];
+		blocks[0][0] = createRandomBlock();
+		blocks[1][0] = createRandomBlock();
+		blocks[1][1] = createRandomBlock();
+		blocks[2][1] = createRandomBlock();
+		return new BlockGroup(blocks);
+	}
+
+
+	public static BlockGroup createZ() {
+		Block[][] blocks = new Block[3][2];
+		blocks[0][1] = createRandomBlock();
+		blocks[1][0] = createRandomBlock();
+		blocks[1][1] = createRandomBlock();
+		blocks[2][0] = createRandomBlock();
+		return new BlockGroup(blocks);
+	}
+
+
+	public static BlockGroup createT() {
+		Block[][] blocks = new Block[3][2];
+		blocks[0][0] = createRandomBlock();
+		blocks[1][0] = createRandomBlock();
+		blocks[1][1] = createRandomBlock();
+		blocks[2][0] = createRandomBlock();
+		return new BlockGroup(blocks);
+	}
+
+
+	public static BlockGroup createRandom() {
+		int random = (int) (Math.random() * 7);
+		switch (random) {
+			case 0:
+				return createBox();
+			case 1:
+				return createL();
+			case 2:
+				return createLMirrored();
+			case 3:
+				return createI();
+			case 4:
+				return createS();
+			case 5:
+				return createZ();
+			case 6:
+				return createT();
+		}
+		throw new IllegalStateException("not soooo random ...");
+	}
+
+
 	private static Block createRandomBlock() {
 		int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
 		return new Block(bitmapType, BlockType.PLAYER_1);
@@ -53,11 +115,6 @@ public class BlockGroup {
 
 	private BlockGroup(Block[][] blocks) {
 		this.blocks = blocks;
-	}
-
-
-	public void rotate() {
-		// TODO
 	}
 
 	public Block getBlock(int xPos, int yPos) {
@@ -88,7 +145,7 @@ public class BlockGroup {
 		return blocks[0].length;
 	}
 
-	public BlockGroup roate() {
+	public BlockGroup rotate() {
 		Block[][] rotatedBlocks = new Block[getYSize()][getXSize()];
 		for (int x = 0; x < getXSize(); ++x) {
 			for (int y = 0; y < getYSize(); ++y) {
