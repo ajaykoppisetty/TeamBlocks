@@ -128,7 +128,9 @@ public class GameManager {
 
 	public void onOneDownClicked() {
 		if (activeGroup == null) return;
-		moveActiveGroupDown();
+		if (!moveActiveGroupDown()) {
+			checkAndRemoveCompletedLines();;
+		}
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -136,6 +138,7 @@ public class GameManager {
 	public void onAllDownClicked() {
 		if (activeGroup == null) return;
 		while (moveActiveGroupDown()); // move all the way down
+		checkAndRemoveCompletedLines();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -144,6 +147,7 @@ public class GameManager {
 	 * Called when sufficient time has passed that blocks should fall down.
 	 */
 	private void onGameTick() {
+		// create / move active group
 		if (activeGroup == null) {
 			Timber.d("Creating new group");
 			// create new group
@@ -153,18 +157,16 @@ public class GameManager {
 			activeGroup.setxPos(xPos);
 
 		} else {
-			moveActiveGroupDown();
+			if (!moveActiveGroupDown()) {
+				checkAndRemoveCompletedLines();
+			}
 		}
 
 		// send full field update
 		sendUpdate(true);
 
-		// TODO remove this at some point
-		++currentScore;
-
 		// update listeners
 		gameUpdateListener.onFieldChanged();
-		gameUpdateListener.onScoreChanged();
 	}
 
 
@@ -230,6 +232,39 @@ public class GameManager {
 			// move group down
 			activeGroup.setyPos(activeGroup.getyPos() - 1);
 			return true;
+		}
+	}
+
+
+	private void checkAndRemoveCompletedLines() {
+		int completedRows = 0;
+
+		rowLabel : for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
+			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+				if (field[x][y] == null) continue rowLabel;
+			}
+
+			// remove row
+			++completedRows;
+			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+				field[x][y] = null;
+			}
+
+			// move top down
+			int topY = y + 1;
+			while (topY < Constants.BLOCKS_COUNT_Y) {
+				for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+					field[x][topY - 1] = field[x][topY];
+				}
+				++topY;
+			}
+			--y;
+		}
+
+		// update score
+		if (completedRows > 0) {
+			currentScore += completedRows * 10;
+			gameUpdateListener.onScoreChanged();
 		}
 	}
 
