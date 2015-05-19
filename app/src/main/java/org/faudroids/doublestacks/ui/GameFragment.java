@@ -2,6 +2,7 @@ package org.faudroids.doublestacks.ui;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -60,7 +62,17 @@ public class GameFragment extends AbstractFragment implements
 		homeButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stopGame();
+				showDialog(new AlertDialog.Builder(getActivity())
+						.setTitle(R.string.quit_game_title)
+						.setMessage(R.string.quit_game_message)
+						.setPositiveButton(R.string.quit_game_action_quit, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								stopGame();
+							}
+						})
+						.setNegativeButton(android.R.string.cancel, null)
+						.create());
 			}
 		});
 		leftButton.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +188,7 @@ public class GameFragment extends AbstractFragment implements
 
 	@Override
 	public void onGameOver() {
-		new AlertDialog.Builder(getActivity())
+		showDialog(new AlertDialog.Builder(getActivity())
 				.setTitle(R.string.game_over_title)
 				.setMessage(getString(R.string.game_over_message, gameManager.getCurrentScore()))
 				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -187,7 +199,7 @@ public class GameFragment extends AbstractFragment implements
 					}
 				})
 				.setCancelable(false)
-				.show();
+				.create());
 	}
 
 
@@ -196,4 +208,13 @@ public class GameFragment extends AbstractFragment implements
 		actionListener.onGameStopped();
 		gameManager.stopGame();
 	}
+
+
+	private void showDialog(Dialog dialog) {
+		dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+		dialog.show();
+		dialog.getWindow().getDecorView().setSystemUiVisibility(getActivity().getWindow().getDecorView().getSystemUiVisibility());
+		dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+	}
+
 }

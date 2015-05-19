@@ -17,6 +17,10 @@
     <string name="game_over_title">Game Over</string>
     <string name="game_over_message">You scored %1$d points!</string>
 
+    <string name="quit_game_title">Quit Game</string>
+    <string name="quit_game_message">Quit the current game?</string>
+    <string name="quit_game_action_quit">Quit</string>
+
     <string name="about_version">Version %1$s</string>
     <string name="about_title">About</string>
     <string name="about_msg">
