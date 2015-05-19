@@ -6,7 +6,9 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -20,6 +22,7 @@ import javax.inject.Inject;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 import timber.log.Timber;
 
 @ContentView(R.layout.activity_main)
@@ -37,11 +40,16 @@ public class MainActivity extends RoboActivity implements
 	@Inject private GoogleApiClient googleApiClient;
 	@Inject private WindowUtils windowUtils;
 
+	@InjectView(R.id.spinner) private View spinnerContainer;
+	@InjectView(R.id.spinner_image) private ImageView spinnerImage;
+	protected SpinnerUtils spinnerUtils;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		spinnerUtils = new SpinnerUtils(spinnerContainer, spinnerImage);
 	}
 
 
@@ -54,6 +62,7 @@ public class MainActivity extends RoboActivity implements
 		googleApiClient.registerConnectionCallbacks(this);
 		googleApiClient.registerConnectionFailedListener(this);
 		googleApiClient.connect();
+		spinnerUtils.showSpinner();
 	}
 
 
@@ -77,6 +86,7 @@ public class MainActivity extends RoboActivity implements
 		if (connectionHint != null) {
 			invitation = connectionHint.getParcelable(Multiplayer.EXTRA_INVITATION);
 		}
+		spinnerUtils.hideSpinner();
 		showFragment(MenuFragment.createInstance(invitation), true);
 	}
 
@@ -113,6 +123,7 @@ public class MainActivity extends RoboActivity implements
 			}
 		}
 
+		spinnerUtils.hideSpinner();
 		showFragment(new LoginFragment(), false);
 	}
 

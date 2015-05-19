@@ -68,14 +68,14 @@ public class MenuFragment extends AbstractFragment implements
 		quickGameButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showSpinner();
+				spinnerUtils.showSpinner();
 				connectionManager.autoMatchPlayer();
 			}
 		});
 		inviteButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showSpinner();
+				spinnerUtils.showSpinner();
 				// launch the player selection screen
 				Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(googleApiClient, 1, 1);
 				startActivityForResult(intent, REQUEST_INVITE);
@@ -84,7 +84,7 @@ public class MenuFragment extends AbstractFragment implements
 		viewInvitationsButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showSpinner();
+				spinnerUtils.showSpinner();
 				showInvitations();
 			}
 		});
@@ -116,7 +116,7 @@ public class MenuFragment extends AbstractFragment implements
 
 	@Override
 	public void onActivityResult(int request, int response, Intent data) {
-		hideSpinner();
+		spinnerUtils.hideSpinner();
 		switch (request) {
 			case REQUEST_INVITE:
 				if (response != Activity.RESULT_OK) return;
