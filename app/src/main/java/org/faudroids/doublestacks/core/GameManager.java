@@ -129,7 +129,7 @@ public class GameManager {
 	public void onOneDownClicked() {
 		if (activeGroup == null) return;
 		if (!moveActiveGroupDown()) {
-			checkAndRemoveCompletedLines();;
+			checkAndRemoveCompletedLines();
 		}
 		gameUpdateListener.onFieldChanged();
 	}
@@ -155,6 +155,15 @@ public class GameManager {
 			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - activeGroup.getYSize());
 			int xPos = (Constants.BLOCKS_COUNT_X - activeGroup.getXSize()) / 2;
 			activeGroup.setxPos(xPos);
+
+			// check for game end
+			for (Location blockLocation : activeGroup.getAbsoluteLocations()) {
+				if (field[blockLocation.x][blockLocation.y] != null) {
+					gameUpdateListener.onGameOver();
+					stopGame();
+					return;
+				}
+			}
 
 		} else {
 			if (!moveActiveGroupDown()) {

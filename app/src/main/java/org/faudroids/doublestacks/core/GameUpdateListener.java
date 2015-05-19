@@ -4,5 +4,6 @@ public interface GameUpdateListener {
 
 	void onFieldChanged();
 	void onScoreChanged();
+	void onGameOver();
 
 }

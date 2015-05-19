@@ -1,6 +1,8 @@
 package org.faudroids.doublestacks.ui;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
@@ -169,6 +171,23 @@ public class GameFragment extends AbstractFragment implements
 	@Override
 	public void onScoreChanged() {
 		scoreView.setText(String.valueOf(gameManager.getCurrentScore()));
+	}
+
+
+	@Override
+	public void onGameOver() {
+		new AlertDialog.Builder(getActivity())
+				.setTitle(R.string.game_over_title)
+				.setMessage(getString(R.string.game_over_message, gameManager.getCurrentScore()))
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						connectionManager.leaveRoom();
+						actionListener.onGameStopped();
+					}
+				})
+				.setCancelable(false)
+				.show();
 	}
 
 
