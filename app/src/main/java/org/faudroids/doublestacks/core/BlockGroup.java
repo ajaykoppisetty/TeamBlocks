@@ -1,6 +1,10 @@
 package org.faudroids.doublestacks.core;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * A group of blocks which falls together.
  */
@@ -77,6 +81,16 @@ public class BlockGroup {
 
 	public int getYSize() {
 		return blocks[0].length;
+	}
+
+	public Collection<Location> getAbsoluteLocations() {
+		List<Location> locations = new ArrayList<>();
+		for (int x = 0; x < getXSize(); ++x) {
+			for (int y = 0; y < getYSize(); ++y) {
+				locations.add(new Location(x + xPos, y + yPos));
+			}
+		}
+		return locations;
 	}
 
 }

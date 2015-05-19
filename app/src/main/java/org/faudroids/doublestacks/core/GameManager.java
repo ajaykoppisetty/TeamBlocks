@@ -68,24 +68,40 @@ public class GameManager {
 
 
 	public void onLeftClicked() {
-		/*
-		field[activeBlockXPos][activeBlockYPos] = null;
-		activeBlockXPos = Math.max(0, activeBlockXPos - 1);
-		field[activeBlockXPos][activeBlockYPos] = activeBlock;
+		if (activeGroup == null) return;
+
+		// check wall
+		if (activeGroup.getxPos() == 0) return;
+
+		// check field
+		for (Location blockLocation : activeGroup.getAbsoluteLocations()) {
+			Block fieldBlock = field[blockLocation.x - 1][blockLocation.y];
+			if (fieldBlock != null) return;
+		}
+
+		// update group
+		activeGroup.setxPos(activeGroup.getxPos() - 1);
 		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
-		*/
 	}
 
 
 	public void onRightClicked() {
-		/*
-		field[activeBlockXPos][activeBlockYPos] = null;
-		activeBlockXPos = Math.min(Constants.BLOCKS_COUNT_X - 1, activeBlockXPos + 1);
-		field[activeBlockXPos][activeBlockYPos] = activeBlock;
+		if (activeGroup == null) return;
+
+		// check wall
+		if (activeGroup.getxPos() + activeGroup.getXSize() == Constants.BLOCKS_COUNT_X) return;
+
+		// check field
+		for (Location blockLocation : activeGroup.getAbsoluteLocations()) {
+			Block fieldBlock = field[blockLocation.x + 1][blockLocation.y];
+			if (fieldBlock != null) return;
+		}
+
+		// update group
+		activeGroup.setxPos(activeGroup.getxPos() + 1);
 		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
-		*/
 	}
 
 
@@ -124,10 +140,9 @@ public class GameManager {
 			}
 
 			if (!touchdown) {
-				for (int x = activeGroup.getxPos(); x < activeGroup.getxPos() + activeGroup.getXSize(); ++x) {
-					Block groupBlock = activeGroup.getBlock(x - activeGroup.getxPos(), 0);
-					Block groundBlock = field[x][activeGroup.getyPos() - 1];
-					if (groundBlock != null && groupBlock != null) {
+				for (Location blockLocation : activeGroup.getAbsoluteLocations()) {
+					Block fieldBlock = field[blockLocation.x][blockLocation.y - 1];
+					if (fieldBlock != null) {
 						touchdown = true;
 						break;
 					}
