@@ -9,9 +9,8 @@ import android.graphics.Rect;
 import android.view.SurfaceHolder;
 
 import org.faudroids.doublestacks.core.Block;
+import org.faudroids.doublestacks.core.BlockGroup;
 import org.faudroids.doublestacks.core.GameManager;
-
-import timber.log.Timber;
 
 class GraphicsManager {
 
@@ -41,7 +40,7 @@ class GraphicsManager {
 		// update background
 		canvas.drawBitmap(bitmapManager.getBlocksBackground(), 0, 0, BITMAP_PAINT);
 
-		// update blocks
+		// update field
 		Block[][] field = gameManager.getField();
 		int xCount = field.length;
 		int yCount = field[0].length;
@@ -61,6 +60,29 @@ class GraphicsManager {
 								(xPos + 1) * xSize,
 								(yCount - yPos) * ySize),
 						BITMAP_PAINT);
+			}
+		}
+
+		// update groups
+		BlockGroup group = gameManager.getActiveGroup();
+		if (group != null) {
+			for (int x = 0; x < group.getXSize(); ++x) {
+				for (int y = 0; y < group.getYSize(); ++y) {
+					Block block = group.getBlock(x, y);
+					if (block == null) continue;
+					int xPos = x + group.getxPos();
+					int yPos = y + group.getyPos();
+
+					canvas.drawBitmap(
+							bitmapManager.getBlocks().getBitmap(block.getBlockType(), block.getBitmapType()),
+							null,
+							new Rect(
+									xPos * xSize,
+									(yCount - yPos - 1) * ySize,
+									(xPos + 1) * xSize,
+									(yCount - yPos) * ySize),
+							BITMAP_PAINT);
+				}
 			}
 		}
 

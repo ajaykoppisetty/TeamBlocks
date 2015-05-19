@@ -25,10 +25,7 @@ public class GameManager {
 	private int currentScore = 0;
 	private GameTickRunnable tickRunnable = null;
 
-	// TODO this should probably be a group at some point
-	private Block activeBlock = null;
-	private int activeBlockXPos, activeBlockYPos;
-
+	private BlockGroup activeGroup = null;
 
 
 	@Inject
@@ -39,6 +36,11 @@ public class GameManager {
 
 	public Block[][] getField() {
 		return field;
+	}
+
+
+	public BlockGroup getActiveGroup() {
+		return activeGroup;
 	}
 
 
@@ -66,20 +68,24 @@ public class GameManager {
 
 
 	public void onLeftClicked() {
+		/*
 		field[activeBlockXPos][activeBlockYPos] = null;
-		activeBlockXPos = Math.max(0, activeBlockXPos -1);
+		activeBlockXPos = Math.max(0, activeBlockXPos - 1);
 		field[activeBlockXPos][activeBlockYPos] = activeBlock;
 		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
+		*/
 	}
 
 
 	public void onRightClicked() {
+		/*
 		field[activeBlockXPos][activeBlockYPos] = null;
 		activeBlockXPos = Math.min(Constants.BLOCKS_COUNT_X - 1, activeBlockXPos + 1);
 		field[activeBlockXPos][activeBlockYPos] = activeBlock;
 		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
+		*/
 	}
 
 
@@ -102,20 +108,47 @@ public class GameManager {
 	 * Called when sufficient time has passed that blocks should fall down.
 	 */
 	private void onGameTick() {
-		// update blocks
-		if (activeBlock == null) {
-			// create new block
-			activeBlock = createRandomBlock(true);
-			activeBlockXPos = (int) (Math.random() * Constants.BLOCKS_COUNT_X);
-			activeBlockYPos = Constants.BLOCKS_COUNT_Y - 1;
-			field[activeBlockXPos][activeBlockYPos] = activeBlock;
+		if (activeGroup == null) {
+			Timber.d("Creating new group");
+			// create new group
+			activeGroup = createRandomGroup();
+			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - 1 - activeGroup.getYSize());
+			int xPos = (Constants.BLOCKS_COUNT_X - activeGroup.getXSize()) / 2;
+			activeGroup.setxPos(xPos);
 
 		} else {
-			// move existing block
-			field[activeBlockXPos][activeBlockYPos] = null;
-			--activeBlockYPos;
-			field[activeBlockXPos][activeBlockYPos] = activeBlock;
-			if (activeBlockYPos == 0) activeBlock = null;
+			// move existing group
+			boolean touchdown = false;
+			if (activeGroup.getyPos() == 0) {
+				touchdown = true;
+			}
+
+			if (!touchdown) {
+				for (int x = activeGroup.getxPos(); x < activeGroup.getxPos() + activeGroup.getXSize(); ++x) {
+					Block groupBlock = activeGroup.getBlock(x - activeGroup.getxPos(), 0);
+					Block groundBlock = field[x][activeGroup.getyPos() - 1];
+					if (groundBlock != null && groupBlock != null) {
+						touchdown = true;
+						break;
+					}
+				}
+			}
+
+			if (touchdown) {
+				// merge with field and release group
+				for (int x = 0; x < activeGroup.getXSize(); ++x) {
+					for (int y = 0; y < activeGroup.getYSize(); ++y) {
+						Block block = activeGroup.getBlock(x, y);
+						if (block == null) continue;
+						field[activeGroup.getxPos() + x][activeGroup.getyPos() + y] = block;
+					}
+				}
+				activeGroup = null;
+
+			} else {
+				// move group down
+				activeGroup.setyPos(activeGroup.getyPos() - 1);
+			}
 		}
 
 		// send full field update
@@ -131,6 +164,7 @@ public class GameManager {
 
 
 	public void onMsg(Serializable data, boolean isReliable) {
+		/*
 		FieldUpdate update = (FieldUpdate) data;
 		if (!messageManager.receiveMessage(update, isReliable)) {
 			Timber.d("dropping msg (" + update.getEpoch() + ", " + update.getSeqNum() + ")");
@@ -152,10 +186,12 @@ public class GameManager {
 		gameUpdateListener.onFieldChanged();
 
 		// TODO remove full lines here BUT only is message is reliable!!
+		*/
 	}
 
 
 	private void sendUpdate(boolean isReliable) {
+		/*
 		FieldUpdate update = new FieldUpdate();
 		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
 			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
@@ -167,6 +203,13 @@ public class GameManager {
 			}
 		}
 		messageManager.sendMessage(update, isReliable);
+		*/
+	}
+
+
+	private BlockGroup createRandomGroup() {
+		// TODO random!!
+		return BlockGroup.createBox();
 	}
 
 
