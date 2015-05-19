@@ -153,8 +153,21 @@ public class BlockGroup {
 			}
 		}
 		BlockGroup rotatedGroup = new BlockGroup(rotatedBlocks);
-		rotatedGroup.setxPos(xPos);
-		rotatedGroup.setyPos(yPos);
+
+		int newXPos = xPos;
+		int newYPos = yPos;
+
+		// move the I block when rotating (is that a little hackish? yes ...)
+		if (rotatedGroup.getXSize() == 1) {
+			++newXPos;
+			--newYPos;
+		} else if (rotatedGroup.getYSize() == 1) {
+			--newXPos;
+			++newYPos;
+		}
+
+		rotatedGroup.setxPos(newXPos);
+		rotatedGroup.setyPos(newYPos);
 		return rotatedGroup;
 	}
 
