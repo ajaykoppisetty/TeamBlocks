@@ -111,7 +111,9 @@ public class GameManager {
 
 
 	public void onOneDownClicked() {
-		// TODO awesome stuff goes here
+		if (activeGroup == null) return;
+		moveActiveGroupDown();
+		gameUpdateListener.onFieldChanged();
 	}
 
 
@@ -133,37 +135,7 @@ public class GameManager {
 			activeGroup.setxPos(xPos);
 
 		} else {
-			// move existing group
-			boolean touchdown = false;
-			if (activeGroup.getyPos() == 0) {
-				touchdown = true;
-			}
-
-			if (!touchdown) {
-				for (Location blockLocation : activeGroup.getAbsoluteLocations()) {
-					Block fieldBlock = field[blockLocation.x][blockLocation.y - 1];
-					if (fieldBlock != null) {
-						touchdown = true;
-						break;
-					}
-				}
-			}
-
-			if (touchdown) {
-				// merge with field and release group
-				for (int x = 0; x < activeGroup.getXSize(); ++x) {
-					for (int y = 0; y < activeGroup.getYSize(); ++y) {
-						Block block = activeGroup.getBlock(x, y);
-						if (block == null) continue;
-						field[activeGroup.getxPos() + x][activeGroup.getyPos() + y] = block;
-					}
-				}
-				activeGroup = null;
-
-			} else {
-				// move group down
-				activeGroup.setyPos(activeGroup.getyPos() - 1);
-			}
+			moveActiveGroupDown();
 		}
 
 		// send full field update
@@ -202,6 +174,40 @@ public class GameManager {
 
 		// TODO remove full lines here BUT only is message is reliable!!
 		*/
+	}
+
+
+	private void moveActiveGroupDown() {
+		boolean touchdown = false;
+		if (activeGroup.getyPos() == 0) {
+			touchdown = true;
+		}
+
+		if (!touchdown) {
+			for (Location blockLocation : activeGroup.getAbsoluteLocations()) {
+				Block fieldBlock = field[blockLocation.x][blockLocation.y - 1];
+				if (fieldBlock != null) {
+					touchdown = true;
+					break;
+				}
+			}
+		}
+
+		if (touchdown) {
+			// merge with field and release group
+			for (int x = 0; x < activeGroup.getXSize(); ++x) {
+				for (int y = 0; y < activeGroup.getYSize(); ++y) {
+					Block block = activeGroup.getBlock(x, y);
+					if (block == null) continue;
+					field[activeGroup.getxPos() + x][activeGroup.getyPos() + y] = block;
+				}
+			}
+			activeGroup = null;
+
+		} else {
+			// move group down
+			activeGroup.setyPos(activeGroup.getyPos() - 1);
+		}
 	}
 
 
