@@ -28,7 +28,6 @@ import timber.log.Timber;
 
 public class GameFragment extends AbstractFragment implements
 		ConnectionManager.ConnectionListener,
-		SurfaceHolder.Callback,
 		GameUpdateListener {
 
 	@InjectView(R.id.button_home) private ImageButton homeButton;
@@ -40,13 +39,15 @@ public class GameFragment extends AbstractFragment implements
 
 	@InjectView(R.id.text_score) private TextView scoreView;
 
-	@InjectView(R.id.surface_view) private SurfaceView surfaceView;
-	private SurfaceHolder surfaceHolder;
+	@InjectView(R.id.surface_view_field) private SurfaceView fieldSurfaceView;
+	@InjectView(R.id.surface_view_preview) private SurfaceView previewSurfaceView;
 
 	@Inject private ConnectionManager connectionManager;
 	@Inject private GameManager gameManager;
 	@Inject private BitmapManager bitmapManager;
 	private GraphicsManager graphicsManager = null;
+
+	private SurfaceHolder fieldSurfaceHolder, previewSurfaceHolder;
 
 
 	public GameFragment() {
@@ -107,10 +108,15 @@ public class GameFragment extends AbstractFragment implements
 		});
 
 		// setup drawing area
-		SurfaceHolder holder = surfaceView.getHolder();
-		holder.addCallback(this);
-		surfaceView.setZOrderOnTop(true);
-		holder.setFormat(PixelFormat.TRANSPARENT);
+		SurfaceHolder fieldHolder = fieldSurfaceView.getHolder();
+		fieldHolder.addCallback(new MultiSurfaceHolderCallback(true));
+		fieldSurfaceView.setZOrderOnTop(true);
+		fieldHolder.setFormat(PixelFormat.TRANSPARENT);
+
+		SurfaceHolder previewHolder = previewSurfaceView.getHolder();
+		previewHolder.addCallback(new MultiSurfaceHolderCallback(false));
+		previewSurfaceView.setZOrderOnTop(true);
+		previewHolder.setFormat(PixelFormat.TRANSPARENT);
 
 		// start game
 		gameManager.startGame(this);
@@ -156,25 +162,6 @@ public class GameFragment extends AbstractFragment implements
 
 
 	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		this.surfaceHolder = holder;
-		this.graphicsManager = new GraphicsManager(surfaceHolder, gameManager, bitmapManager, getResources());
-		this.graphicsManager.redrawGraphics();
-	}
-
-
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {  }
-
-
-	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		this.surfaceHolder = null;
-		this.graphicsManager = null;
-	}
-
-
-	@Override
 	public void onFieldChanged() {
 		if (graphicsManager != null) graphicsManager.redrawGraphics();
 	}
@@ -215,6 +202,44 @@ public class GameFragment extends AbstractFragment implements
 		dialog.show();
 		dialog.getWindow().getDecorView().setSystemUiVisibility(getActivity().getWindow().getDecorView().getSystemUiVisibility());
 		dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+	}
+
+
+	/**
+	 * Waits for all canvases to become ready before starting the {@link GraphicsManager}.
+	 */
+	private class MultiSurfaceHolderCallback implements SurfaceHolder.Callback {
+
+		private final boolean isFieldCallback;
+
+		public MultiSurfaceHolderCallback(boolean isFieldCallback) {
+			this.isFieldCallback =isFieldCallback;
+
+		}
+
+		@Override
+		public void surfaceCreated(SurfaceHolder holder) {
+			if (isFieldCallback) fieldSurfaceHolder = holder;
+			else previewSurfaceHolder = holder;
+
+			if (fieldSurfaceHolder != null && previewSurfaceHolder != null) {
+				graphicsManager = new GraphicsManager(fieldSurfaceHolder, previewSurfaceHolder, gameManager, bitmapManager, getResources());
+				graphicsManager.redrawGraphics();
+			}
+		}
+
+
+		@Override
+		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {  }
+
+
+		@Override
+		public void surfaceDestroyed(SurfaceHolder holder) {
+			if (isFieldCallback) fieldSurfaceHolder = null;
+			else previewSurfaceHolder = null;
+			graphicsManager = null;
+		}
+
 	}
 
 }

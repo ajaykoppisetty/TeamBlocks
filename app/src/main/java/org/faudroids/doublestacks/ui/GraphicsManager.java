@@ -16,17 +16,19 @@ class GraphicsManager {
 
 	private static final Paint BITMAP_PAINT = new Paint(Paint.FILTER_BITMAP_FLAG);
 
-	private final SurfaceHolder surfaceHolder;
+	private final SurfaceHolder fieldSurfaceHolder, previewSurfaceHolder;
 	private final GameManager gameManager;
 	private final BitmapManager bitmapManager;
 
 	public GraphicsManager(
-			SurfaceHolder surfaceHolder,
+			SurfaceHolder fieldSurfaceHolder,
+			SurfaceHolder previewSurfaceHolder,
 			GameManager gameManager,
 			BitmapManager bitmapManager,
 			Resources resources) {
 
-		this.surfaceHolder = surfaceHolder;
+		this.fieldSurfaceHolder = fieldSurfaceHolder;
+		this.previewSurfaceHolder = previewSurfaceHolder;
 		this.gameManager = gameManager;
 		this.bitmapManager = bitmapManager;
 		bitmapManager.load(resources);
@@ -34,11 +36,20 @@ class GraphicsManager {
 
 
 	public void redrawGraphics() {
-		Canvas canvas = surfaceHolder.lockCanvas();
-		canvas.drawColor(0, PorterDuff.Mode.CLEAR); // clear screen
+		Canvas fieldCanvas = fieldSurfaceHolder.lockCanvas();
+		fieldCanvas.drawColor(0, PorterDuff.Mode.CLEAR); // clear screen
+		drawField(fieldCanvas);
+		fieldSurfaceHolder.unlockCanvasAndPost(fieldCanvas);
 
+		Canvas previewCanvas = previewSurfaceHolder.lockCanvas();
+		previewCanvas.drawColor(0, PorterDuff.Mode.CLEAR); // clear screen
+		drawPreview(previewCanvas);
+		previewSurfaceHolder.unlockCanvasAndPost(previewCanvas);
+	}
+
+	private void drawField(Canvas canvas) {
 		// update background
-		canvas.drawBitmap(bitmapManager.getBlocksBackground(), 0, 0, BITMAP_PAINT);
+		canvas.drawBitmap(bitmapManager.getFieldBackground(), 0, 0, BITMAP_PAINT);
 
 		// update field
 		Block[][] field = gameManager.getField();
@@ -65,28 +76,46 @@ class GraphicsManager {
 
 		// update groups
 		BlockGroup group = gameManager.getActiveGroup();
-		if (group != null) {
-			for (int x = 0; x < group.getXSize(); ++x) {
-				for (int y = 0; y < group.getYSize(); ++y) {
-					Block block = group.getBlock(x, y);
-					if (block == null) continue;
-					int xPos = x + group.getxPos();
-					int yPos = y + group.getyPos();
+		if (group == null) return;
+		drawBlockGroup(canvas, group, group.getxPos(), group.getyPos(), xSize, ySize, yCount);
+	}
 
-					canvas.drawBitmap(
-							bitmapManager.getBlocks().getBitmap(block.getBlockType(), block.getBitmapType()),
-							null,
-							new Rect(
-									xPos * xSize,
-									(yCount - yPos - 1) * ySize,
-									(xPos + 1) * xSize,
-									(yCount - yPos) * ySize),
-							BITMAP_PAINT);
-				}
+
+	private void drawPreview(Canvas canvas) {
+		// update background
+		canvas.drawBitmap(bitmapManager.getFieldBackground(), 0, 0, BITMAP_PAINT);
+
+		BlockGroup group = gameManager.getNextGroup();
+		int xCount = 3;
+		int yCount = 4;
+		int xSize = canvas.getWidth() / xCount;
+		int ySize = canvas.getHeight() / yCount;
+		int xOffset = (xCount - group.getXSize()) / 2;
+		int yOffset = (yCount - group.getYSize()) / 2;
+
+		drawBlockGroup(canvas, gameManager.getNextGroup(), xOffset, yOffset, xSize, ySize, yCount);
+	}
+
+
+	private void drawBlockGroup(Canvas canvas, BlockGroup group, int xOffset, int yOffset, int xSize, int ySize, int yCount) {
+		for (int x = 0; x < group.getXSize(); ++x) {
+			for (int y = 0; y < group.getYSize(); ++y) {
+				Block block = group.getBlock(x, y);
+				if (block == null) continue;
+				int xPos = x + xOffset;
+				int yPos = y + yOffset;
+
+				canvas.drawBitmap(
+						bitmapManager.getBlocks().getBitmap(block.getBlockType(), block.getBitmapType()),
+						null,
+						new Rect(
+								xPos * xSize,
+								(yCount - yPos - 1) * ySize,
+								(xPos + 1) * xSize,
+								(yCount - yPos) * ySize),
+						BITMAP_PAINT);
 			}
 		}
-
-		surfaceHolder.unlockCanvasAndPost(canvas);
 	}
 
 }

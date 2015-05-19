@@ -13,7 +13,7 @@ import javax.inject.Inject;
  */
 public class BitmapManager {
 
-	private Bitmap blocksBackground = null;
+	private Bitmap fieldBackground = null, previewBackground = null;
 	private BlockBitmaps blocks = null;
 
 	@Inject
@@ -21,13 +21,19 @@ public class BitmapManager {
 
 
 	public void load(Resources resources) {
-		blocksBackground = BitmapFactory.decodeResource(resources, R.drawable.blocks_background);
+		fieldBackground = BitmapFactory.decodeResource(resources, R.drawable.blocks_background);
+		previewBackground = BitmapFactory.decodeResource(resources, R.drawable.blocks_preview);
 		blocks = BlockBitmaps.load(resources);
 	}
 
 
-	public Bitmap getBlocksBackground() {
-		return blocksBackground;
+	public Bitmap getFieldBackground() {
+		return fieldBackground;
+	}
+
+
+	public Bitmap getPreviewBackground() {
+		return previewBackground;
 	}
 
 

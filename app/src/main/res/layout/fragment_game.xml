@@ -20,7 +20,7 @@
             >
 
             <SurfaceView
-                android:id="@+id/surface_view"
+                android:id="@+id/surface_view_field"
                 android:layout_width="@dimen/field_width"
                 android:layout_height="@dimen/field_height"
                 />
@@ -29,7 +29,7 @@
                 android:id="@+id/layout_bottom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/surface_view"
+                android:layout_below="@id/surface_view_field"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center_horizontal"
                 android:orientation="horizontal"
@@ -116,13 +116,12 @@
                 android:textColor="@android:color/white"
                 />
 
-            <ImageView
-                android:id="@+id/image_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <SurfaceView
+                android:id="@+id/surface_view_preview"
+                android:layout_width="@dimen/preview_width"
+                android:layout_height="@dimen/preview_height"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="40dp"
-                android:src="@drawable/blocks_preview"
                 />
 
         </LinearLayout>

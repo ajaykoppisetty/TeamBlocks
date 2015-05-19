@@ -2,4 +2,7 @@
 <resources>
     <dimen name="field_width">375dp</dimen>
     <dimen name="field_height">750dp</dimen>
+
+    <dimen name="preview_width">112.5dp</dimen>
+    <dimen name="preview_height">150dp</dimen>
 </resources>

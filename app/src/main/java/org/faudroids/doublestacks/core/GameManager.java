@@ -26,6 +26,7 @@ public class GameManager {
 	private GameTickRunnable tickRunnable = null;
 
 	private BlockGroup activeGroup = null;
+	private BlockGroup nextGroup = null;
 
 
 	@Inject
@@ -44,6 +45,11 @@ public class GameManager {
 	}
 
 
+	public BlockGroup getNextGroup() {
+		return nextGroup;
+	}
+
+
 	public int getCurrentScore() {
 		return currentScore;
 	}
@@ -54,6 +60,7 @@ public class GameManager {
 		this.gameUpdateListener = gameUpdateListener;
 		this.field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 		this.tickRunnable = new GameTickRunnable();
+		this.nextGroup = BlockGroup.createRandom();
 		new Thread(tickRunnable).start();
 	}
 
@@ -151,7 +158,8 @@ public class GameManager {
 		if (activeGroup == null) {
 			Timber.d("Creating new group");
 			// create new group
-			activeGroup = BlockGroup.createRandom();
+			activeGroup = nextGroup;
+			nextGroup = BlockGroup.createRandom();
 			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - activeGroup.getYSize());
 			int xPos = (Constants.BLOCKS_COUNT_X - activeGroup.getXSize()) / 2;
 			activeGroup.setxPos(xPos);
