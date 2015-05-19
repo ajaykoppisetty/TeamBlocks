@@ -161,6 +161,12 @@ public class MainActivity extends RoboActivity implements
 
 
 	@Override
+	public void onSettingsClicked() {
+		showFragment(new SettingsFragment(), true);
+	}
+
+
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {

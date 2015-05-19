@@ -5,5 +5,6 @@ public interface ActionListener {
 	void onLoginClicked();
 	void onGameStarted();
 	void onGameStopped();
+	void onSettingsClicked();
 
 }

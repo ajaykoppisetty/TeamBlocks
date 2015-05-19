@@ -1,0 +1,84 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <include layout="@layout/background"/>
+
+    <ImageButton
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_back_selector"
+        android:layout_margin="10dp"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Settings"
+            android:textColor="@android:color/white"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            />
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <TextView
+                    android:id="@+id/text_version"
+                    style="@style/SettingsEntry"
+                    />
+
+                <include layout="@layout/divider"/>
+
+                <TextView
+                    android:id="@+id/text_about"
+                    android:text="About"
+                    style="@style/SettingsEntry"
+                    />
+
+                <include layout="@layout/divider"/>
+
+                <TextView
+                    android:id="@+id/text_credits"
+                    android:text="Credits"
+                    style="@style/SettingsEntry"
+                    />
+
+                <include layout="@layout/divider"/>
+
+                <TextView
+                    android:id="@+id/text_feedback"
+                    android:text="Feedback"
+                    style="@style/SettingsEntry"
+                    />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
+
+    <include layout="@layout/spinner"/>
+
+</RelativeLayout>

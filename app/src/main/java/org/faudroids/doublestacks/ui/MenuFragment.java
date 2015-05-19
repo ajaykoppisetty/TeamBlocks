@@ -54,6 +54,7 @@ public class MenuFragment extends AbstractFragment implements
 	@InjectView(R.id.button_quick_game) Button quickGameButton;
 	@InjectView(R.id.button_invite) Button inviteButton;
 	@InjectView(R.id.button_view_invitations) Button viewInvitationsButton;
+	@InjectView(R.id.button_settings) Button settingsButton;
 
 
 	public MenuFragment() {
@@ -86,6 +87,12 @@ public class MenuFragment extends AbstractFragment implements
 			public void onClick(View v) {
 				spinnerUtils.showSpinner();
 				showInvitations();
+			}
+		});
+		settingsButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				actionListener.onSettingsClicked();
 			}
 		});
 
