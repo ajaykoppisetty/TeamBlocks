@@ -15,7 +15,12 @@ public class BlockGroup {
 
 
 	public static BlockGroup createL() {
-		return null;
+		Block[][] blocks = new Block[2][3];
+		blocks[0][0] = createRandomBlock();
+		blocks[0][1] = createRandomBlock();
+		blocks[0][2] = createRandomBlock();
+		blocks[1][0] = createRandomBlock();
+		return new BlockGroup(blocks);
 	}
 
 
@@ -83,10 +88,24 @@ public class BlockGroup {
 		return blocks[0].length;
 	}
 
+	public BlockGroup roate() {
+		Block[][] rotatedBlocks = new Block[getYSize()][getXSize()];
+		for (int x = 0; x < getXSize(); ++x) {
+			for (int y = 0; y < getYSize(); ++y) {
+				rotatedBlocks[-y + getYSize() - 1][x] = blocks[x][y];
+			}
+		}
+		BlockGroup rotatedGroup = new BlockGroup(rotatedBlocks);
+		rotatedGroup.setxPos(xPos);
+		rotatedGroup.setyPos(yPos);
+		return rotatedGroup;
+	}
+
 	public Collection<Location> getAbsoluteLocations() {
 		List<Location> locations = new ArrayList<>();
 		for (int x = 0; x < getXSize(); ++x) {
 			for (int y = 0; y < getYSize(); ++y) {
+				if (blocks[x][y] == null) continue;
 				locations.add(new Location(x + xPos, y + yPos));
 			}
 		}

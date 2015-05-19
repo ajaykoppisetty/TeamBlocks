@@ -106,7 +106,18 @@ public class GameManager {
 
 
 	public void onRotateClicked() {
-		// TODO awesome stuff goes here
+		if (activeGroup == null) return;
+
+		// check field
+		BlockGroup rotatedGroup = activeGroup.roate();
+		for (Location blockLocation : rotatedGroup.getAbsoluteLocations()) {
+			if (field[blockLocation.x][blockLocation.y] != null) return;
+		}
+
+		// update group
+		activeGroup = rotatedGroup;
+		sendUpdate(false);
+		gameUpdateListener.onFieldChanged();
 	}
 
 
@@ -230,7 +241,7 @@ public class GameManager {
 
 	private BlockGroup createRandomGroup() {
 		// TODO random!!
-		return BlockGroup.createBox();
+		return BlockGroup.createL();
 	}
 
 
