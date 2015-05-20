@@ -149,7 +149,7 @@ public class BlockGroup {
 		Block[][] rotatedBlocks = new Block[getYSize()][getXSize()];
 		for (int x = 0; x < getXSize(); ++x) {
 			for (int y = 0; y < getYSize(); ++y) {
-				rotatedBlocks[-y + getYSize() - 1][x] = blocks[x][y];
+				rotatedBlocks[y][-x + getXSize() - 1] = blocks[x][y];
 			}
 		}
 		BlockGroup rotatedGroup = new BlockGroup(rotatedBlocks);
