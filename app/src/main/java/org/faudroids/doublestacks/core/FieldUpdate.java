@@ -4,6 +4,7 @@ package org.faudroids.doublestacks.core;
 import org.roboguice.shaded.goole.common.base.Objects;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * The complete state of a field for one player which can be sent over
@@ -13,17 +14,19 @@ public class FieldUpdate implements Serializable {
 
 	private final Block[][] field;
 	private final BlockGroup activeGroup;
+	private final List<Integer> removedRows;
 
 	private int epoch;
 	private int seqNum;
 
 	public FieldUpdate(BlockGroup activeGroup) {
-		this(activeGroup, null);
+		this(activeGroup, null, null);
 	}
 
-	public FieldUpdate(BlockGroup activeGroup, Block[][] field) {
+	public FieldUpdate(BlockGroup activeGroup, Block[][] field, List<Integer> removedRows) {
 		this.activeGroup = activeGroup;
 		this.field = field;
+		this.removedRows = removedRows;
 	}
 
 	public Block[][] getField() {
@@ -50,6 +53,10 @@ public class FieldUpdate implements Serializable {
 		return activeGroup;
 	}
 
+	public List<Integer> getRemovedRows() {
+		return removedRows;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -58,11 +65,12 @@ public class FieldUpdate implements Serializable {
 		return Objects.equal(epoch, that.epoch) &&
 				Objects.equal(seqNum, that.seqNum) &&
 				Objects.equal(field, that.field) &&
-				Objects.equal(activeGroup, that.activeGroup);
+				Objects.equal(activeGroup, that.activeGroup) &&
+				Objects.equal(removedRows, that.removedRows);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(field, activeGroup, epoch, seqNum);
+		return Objects.hashCode(field, activeGroup, removedRows, epoch, seqNum);
 	}
 }

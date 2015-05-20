@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -14,6 +16,8 @@ import timber.log.Timber;
  * Handles the core game logic.
  */
 public class GameManager {
+
+	private static final int SCORE_PER_ROW = 10;
 
 	// TODO put some awesome game logic here
 
@@ -104,7 +108,7 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() - 1);
-		sendUpdate(false);
+		sendUnreliableUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -123,7 +127,7 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() + 1);
-		sendUpdate(false);
+		sendUnreliableUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -145,17 +149,19 @@ public class GameManager {
 
 		// update group
 		activeGroup = rotatedGroup;
-		sendUpdate(false);
+		sendUnreliableUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
 
 	public void onOneDownClicked() {
 		if (activeGroup == null) return;
+		List<Integer> removedRows = null;
 		if (!moveActiveGroupDown()) {
-			checkAndRemoveCompletedLines();
+			removedRows = checkAndRemoveCompletedLines();
 		}
-		sendUpdate(false);
+		if (removedRows != null) sendReliableUpdate(removedRows);
+		else sendUnreliableUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -163,8 +169,8 @@ public class GameManager {
 	public void onAllDownClicked() {
 		if (activeGroup == null) return;
 		while (moveActiveGroupDown()); // move all the way down
-		sendUpdate(false);
-		checkAndRemoveCompletedLines();
+		List<Integer> removedLines = checkAndRemoveCompletedLines();
+		sendReliableUpdate(removedLines);
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -173,6 +179,8 @@ public class GameManager {
 	 * Called when sufficient time has passed that blocks should fall down.
 	 */
 	private void onGameTick() {
+		List<Integer> removedLines = new ArrayList<>();
+
 		// create / move active group
 		if (activeGroup == null) {
 			Timber.d("Creating new group");
@@ -194,12 +202,12 @@ public class GameManager {
 
 		} else {
 			if (!moveActiveGroupDown()) {
-				checkAndRemoveCompletedLines();
+				removedLines = checkAndRemoveCompletedLines();
 			}
 		}
 
 		// send full field update
-		sendUpdate(true);
+		sendReliableUpdate(removedLines);
 
 		// update listeners
 		gameUpdateListener.onFieldChanged();
@@ -245,38 +253,46 @@ public class GameManager {
 	}
 
 
-	private void checkAndRemoveCompletedLines() {
-		/*
-		int completedRows = 0;
+	private List<Integer> checkAndRemoveCompletedLines() {
+		// indices of completed lines (adjusted for moving down top lines!!)
+		List<Integer> completedRows = new ArrayList<>();
 
 		rowLabel : for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
 			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-				if (field[x][y] == null) continue rowLabel;
+				if (field[x][y] == null || partnerField[x][y] == null) continue rowLabel;
 			}
 
-			// remove row
-			++completedRows;
-			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-				field[x][y] = null;
-			}
-
-			// move top down
-			int topY = y + 1;
-			while (topY < Constants.BLOCKS_COUNT_Y) {
-				for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-					field[x][topY - 1] = field[x][topY];
-				}
-				++topY;
-			}
+			removeRow(y);
+			completedRows.add(y);
 			--y;
 		}
 
 		// update score
-		if (completedRows > 0) {
-			currentScore += completedRows * 10;
+		if (completedRows.size() > 0) {
+			currentScore += completedRows.size() * SCORE_PER_ROW;
 			gameUpdateListener.onScoreChanged();
 		}
-		*/
+
+		return completedRows;
+	}
+
+
+	private void removeRow(int row) {
+		// remove row
+		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+			field[x][row] = null;
+			partnerField[x][row] = null;
+		}
+
+		// move top down
+		int aboveRow = row + 1;
+		while (aboveRow < Constants.BLOCKS_COUNT_Y) {
+			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
+				field[x][aboveRow - 1] = field[x][aboveRow];
+				partnerField[x][aboveRow - 1] = partnerField[x][aboveRow];
+			}
+			++aboveRow;
+		}
 	}
 
 
@@ -289,6 +305,10 @@ public class GameManager {
 
 		// update complete partner field
 		if (isReliable) {
+			for (int row : update.getRemovedRows()) {
+				currentScore += update.getRemovedRows().size() * SCORE_PER_ROW;
+				removeRow(row);
+			}
 			partnerField = update.getField();
 		}
 
@@ -296,15 +316,21 @@ public class GameManager {
 		partnerActiveGroup = update.getActiveGroup();
 
 		gameUpdateListener.onFieldChanged();
-		// TODO remove full lines here BUT only is message is reliable!!
+		if (isReliable) gameUpdateListener.onScoreChanged();
+
+		// TODO potential race condition here where both clients place their active block at the same time but cannot remove a completed line
 	}
 
 
-	private void sendUpdate(boolean isReliable) {
-		FieldUpdate update;
-		if (isReliable) update = new FieldUpdate(activeGroup, field);
-		else update = new FieldUpdate(activeGroup);
-		messageManager.sendMessage(update, isReliable);
+	private void sendReliableUpdate(List<Integer> removedRows) {
+		FieldUpdate update = new FieldUpdate(activeGroup, field, removedRows);
+		messageManager.sendMessage(update, true);
+	}
+
+
+	private void sendUnreliableUpdate() {
+		FieldUpdate update = new FieldUpdate(activeGroup);
+		messageManager.sendMessage(update, false);
 	}
 
 
