@@ -86,7 +86,8 @@ public class GameManager {
 
 	public void stopGame() {
 		Timber.d("stopping game");
-		tickRunnable.stop();
+		this.tickRunnable.stop();
+		this.tickRunnable = null;
 		this.gameUpdateListener = null;
 		this.field = null;
 		this.partnerField = null;
@@ -297,6 +298,10 @@ public class GameManager {
 
 
 	public void onMsg(Serializable data, boolean isReliable) {
+		// if game not running ignore msg
+		if (tickRunnable == null) return;
+
+		// parse and check msg
 		FieldUpdate update = (FieldUpdate) data;
 		if (!messageManager.receiveMessage(update, isReliable)) {
 			Timber.d("dropping msg (" + update.getEpoch() + ", " + update.getSeqNum() + ")");
