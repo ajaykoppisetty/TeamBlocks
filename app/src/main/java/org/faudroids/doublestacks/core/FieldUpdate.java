@@ -11,17 +11,23 @@ import java.io.Serializable;
  */
 public class FieldUpdate implements Serializable {
 
-	private final boolean[][] field = new boolean[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
+	private final Block[][] field;
+	private final BlockGroup activeGroup;
 
 	private int epoch;
 	private int seqNum;
 
-	public boolean hasBlock(int xPos, int yPos) {
-		return field[xPos][yPos];
+	public FieldUpdate(BlockGroup activeGroup) {
+		this(activeGroup, null);
 	}
 
-	public void setBlock(int xPos, int yPos) {
-		field[xPos][yPos] = true;
+	public FieldUpdate(BlockGroup activeGroup, Block[][] field) {
+		this.activeGroup = activeGroup;
+		this.field = field;
+	}
+
+	public Block[][] getField() {
+		return field;
 	}
 
 	public int getEpoch() {
@@ -40,6 +46,10 @@ public class FieldUpdate implements Serializable {
 		this.seqNum = seqNum;
 	}
 
+	public BlockGroup getActiveGroup() {
+		return activeGroup;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -47,11 +57,12 @@ public class FieldUpdate implements Serializable {
 		FieldUpdate that = (FieldUpdate) o;
 		return Objects.equal(epoch, that.epoch) &&
 				Objects.equal(seqNum, that.seqNum) &&
-				Objects.equal(field, that.field);
+				Objects.equal(field, that.field) &&
+				Objects.equal(activeGroup, that.activeGroup);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(field, epoch, seqNum);
+		return Objects.hashCode(field, activeGroup, epoch, seqNum);
 	}
 }

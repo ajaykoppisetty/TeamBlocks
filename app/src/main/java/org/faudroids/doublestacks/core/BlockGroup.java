@@ -1,6 +1,7 @@
 package org.faudroids.doublestacks.core;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * A group of blocks which falls together.
  */
-public class BlockGroup {
+public class BlockGroup implements Serializable {
 
 	private Block[][] blocks;
 	private int xPos, yPos; // left lower position
@@ -109,7 +110,7 @@ public class BlockGroup {
 
 	private static Block createRandomBlock() {
 		int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
-		return new Block(bitmapType, BlockType.PLAYER_1);
+		return new Block(bitmapType);
 	}
 
 
@@ -119,6 +120,15 @@ public class BlockGroup {
 
 	public Block getBlock(int xPos, int yPos) {
 		return blocks[xPos][yPos];
+	}
+
+	public Block getBlockFromAbsolutePosition(int xPos, int yPos) {
+		if (xPos < getxPos() || xPos >= getxPos() + getXSize()
+			|| yPos < getyPos() || yPos >= getyPos() + getYSize()) {
+			return null;
+		}
+
+		return blocks[xPos - getxPos()][yPos - getyPos()];
 	}
 
 	public int getxPos() {

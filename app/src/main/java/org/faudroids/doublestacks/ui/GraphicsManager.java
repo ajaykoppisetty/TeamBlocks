@@ -53,6 +53,10 @@ class GraphicsManager {
 
 		// update field
 		Block[][] field = gameManager.getField();
+		Block[][] partnerField = gameManager.getPartnerField();
+		BlockGroup activeGroup = gameManager.getActiveGroup();
+		BlockGroup partnerActiveGroup = gameManager.getPartnerActiveGroup();
+
 		int xCount = field.length;
 		int yCount = field[0].length;
 		int xSize = canvas.getWidth() / xCount;
@@ -60,10 +64,25 @@ class GraphicsManager {
 
 		for (int xPos = 0; xPos < xCount; ++xPos) {
 			for (int yPos = 0; yPos < yCount; ++yPos) {
-				Block block = field[xPos][yPos];
-				if (block == null) continue;
+				Block block;
+				if (activeGroup != null) block = getNonNull(field[xPos][yPos], activeGroup.getBlockFromAbsolutePosition(xPos, yPos));
+				else block = field[xPos][yPos];
+
+				Block partnerBlock;
+				if (partnerActiveGroup != null) partnerBlock = getNonNull(partnerField[xPos][yPos], partnerActiveGroup.getBlockFromAbsolutePosition(xPos, yPos));
+				else partnerBlock = partnerField[xPos][yPos];
+
+				BlockColor color;
+				if (block == null && partnerBlock == null) continue;
+				if (block != null && partnerBlock != null) {
+					color = BlockColor.RED;
+				} else if (block == null) {
+					color = BlockColor.YELLOW;
+				} else {
+					color = BlockColor.BLUE;
+				}
 				canvas.drawBitmap(
-						bitmapManager.getBlocks().getBitmap(block.getBlockType(), block.getBitmapType()),
+						bitmapManager.getBlocks().getBitmap(color, getNonNull(block, partnerBlock).getBitmapType()),
 						null,
 						new Rect(
 								xPos * xSize,
@@ -73,11 +92,6 @@ class GraphicsManager {
 						BITMAP_PAINT);
 			}
 		}
-
-		// update groups
-		BlockGroup group = gameManager.getActiveGroup();
-		if (group == null) return;
-		drawBlockGroup(canvas, group, group.getxPos(), group.getyPos(), xSize, ySize, yCount);
 	}
 
 
@@ -106,7 +120,7 @@ class GraphicsManager {
 				int yPos = y + yOffset;
 
 				canvas.drawBitmap(
-						bitmapManager.getBlocks().getBitmap(block.getBlockType(), block.getBitmapType()),
+						bitmapManager.getBlocks().getBitmap(BlockColor.BLUE, block.getBitmapType()),
 						null,
 						new Rect(
 								xPos * xSize,
@@ -116,6 +130,13 @@ class GraphicsManager {
 						BITMAP_PAINT);
 			}
 		}
+
+	}
+
+
+	private <T> T getNonNull(T value1, T value2) {
+		if (value1 != null) return value1;
+		else return value2;
 	}
 
 }

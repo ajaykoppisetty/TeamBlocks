@@ -21,12 +21,16 @@ public class GameManager {
 
 	private GameUpdateListener gameUpdateListener = null;
 
-	private Block[][] field = null;
 	private int currentScore = 0;
 	private GameTickRunnable tickRunnable = null;
 
+	private Block[][] field = null;
+
 	private BlockGroup activeGroup = null;
 	private BlockGroup nextGroup = null;
+
+	private Block[][] partnerField = null;
+	private BlockGroup partnerActiveGroup = null;
 
 
 	@Inject
@@ -50,6 +54,16 @@ public class GameManager {
 	}
 
 
+	public BlockGroup getPartnerActiveGroup() {
+		return partnerActiveGroup;
+	}
+
+
+	public Block[][] getPartnerField() {
+		return partnerField;
+	}
+
+
 	public int getCurrentScore() {
 		return currentScore;
 	}
@@ -59,6 +73,7 @@ public class GameManager {
 		Timber.d("starting game");
 		this.gameUpdateListener = gameUpdateListener;
 		this.field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
+		this.partnerField = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 		this.tickRunnable = new GameTickRunnable();
 		this.nextGroup = BlockGroup.createRandom();
 		new Thread(tickRunnable).start();
@@ -70,6 +85,7 @@ public class GameManager {
 		tickRunnable.stop();
 		this.gameUpdateListener = null;
 		this.field = null;
+		this.partnerField = null;
 		this.tickRunnable = null;
 	}
 
@@ -123,7 +139,8 @@ public class GameManager {
 				return;
 			}
 
-			if (field[blockLocation.x][blockLocation.y] != null) return;
+			Block block = field[blockLocation.x][blockLocation.y];
+			if (block != null) return;
 		}
 
 		// update group
@@ -138,6 +155,7 @@ public class GameManager {
 		if (!moveActiveGroupDown()) {
 			checkAndRemoveCompletedLines();
 		}
+		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -145,6 +163,7 @@ public class GameManager {
 	public void onAllDownClicked() {
 		if (activeGroup == null) return;
 		while (moveActiveGroupDown()); // move all the way down
+		sendUpdate(false);
 		checkAndRemoveCompletedLines();
 		gameUpdateListener.onFieldChanged();
 	}
@@ -184,33 +203,6 @@ public class GameManager {
 
 		// update listeners
 		gameUpdateListener.onFieldChanged();
-	}
-
-
-	public void onMsg(Serializable data, boolean isReliable) {
-		/*
-		FieldUpdate update = (FieldUpdate) data;
-		if (!messageManager.receiveMessage(update, isReliable)) {
-			Timber.d("dropping msg (" + update.getEpoch() + ", " + update.getSeqNum() + ")");
-			return;
-		}
-
-		// update complete player 2 field
-		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
-				Block block = field[x][y];
-				if (update.hasBlock(x, y)) {
-					field[x][y] = createRandomBlock(false);
-				} else if (block != null && block.getBlockType().equals(BlockType.PLAYER_2)) {
-					field[x][y] = null;
-				}
-			}
-		}
-
-		gameUpdateListener.onFieldChanged();
-
-		// TODO remove full lines here BUT only is message is reliable!!
-		*/
 	}
 
 
@@ -254,6 +246,7 @@ public class GameManager {
 
 
 	private void checkAndRemoveCompletedLines() {
+		/*
 		int completedRows = 0;
 
 		rowLabel : for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
@@ -283,23 +276,35 @@ public class GameManager {
 			currentScore += completedRows * 10;
 			gameUpdateListener.onScoreChanged();
 		}
+		*/
+	}
+
+
+	public void onMsg(Serializable data, boolean isReliable) {
+		FieldUpdate update = (FieldUpdate) data;
+		if (!messageManager.receiveMessage(update, isReliable)) {
+			Timber.d("dropping msg (" + update.getEpoch() + ", " + update.getSeqNum() + ")");
+			return;
+		}
+
+		// update complete partner field
+		if (isReliable) {
+			partnerField = update.getField();
+		}
+
+		// update active group
+		partnerActiveGroup = update.getActiveGroup();
+
+		gameUpdateListener.onFieldChanged();
+		// TODO remove full lines here BUT only is message is reliable!!
 	}
 
 
 	private void sendUpdate(boolean isReliable) {
-		/*
-		FieldUpdate update = new FieldUpdate();
-		for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
-			for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
-				Block block = field[x][y];
-				if (block == null) continue;
-				if (block.getBlockType().equals(BlockType.PLAYER_1) || block.getBlockType().equals(BlockType.COMBINED)) {
-					update.setBlock(x, y);
-				}
-			}
-		}
+		FieldUpdate update;
+		if (isReliable) update = new FieldUpdate(activeGroup, field);
+		else update = new FieldUpdate(activeGroup);
 		messageManager.sendMessage(update, isReliable);
-		*/
 	}
 
 

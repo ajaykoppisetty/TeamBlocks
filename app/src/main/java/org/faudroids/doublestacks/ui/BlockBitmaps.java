@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import org.faudroids.doublestacks.R;
-import org.faudroids.doublestacks.core.BlockType;
 import org.faudroids.doublestacks.core.Constants;
 
 /**
@@ -43,11 +42,11 @@ public class BlockBitmaps {
 
 	private BlockBitmaps() { }
 
-	public Bitmap getBitmap(BlockType type, int variation) {
+	public Bitmap getBitmap(BlockColor color, int variation) {
 		int typePos = -1;
-		if (type.equals(BlockType.PLAYER_1)) typePos = 0;
-		else if (type.equals(BlockType.PLAYER_2)) typePos = 1;
-		else if (type.equals(BlockType.COMBINED)) typePos = 2;
+		if (color.equals(BlockColor.BLUE)) typePos = 0;
+		else if (color.equals(BlockColor.YELLOW)) typePos = 1;
+		else if (color.equals(BlockColor.RED)) typePos = 2;
 		return bitmaps[typePos][variation];
 	}
 

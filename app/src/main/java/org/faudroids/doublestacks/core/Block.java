@@ -1,27 +1,23 @@
 package org.faudroids.doublestacks.core;
 
 
+import java.io.Serializable;
+
 /**
  * A single block in the playing field.
  */
-public class Block {
+public class Block implements Serializable {
 
 	// TODO put some awesome properties here
 
 	private final int bitmapType;
-	private final BlockType blockType;
 
-	public Block(int bitmapType, BlockType blockType) {
+	public Block(int bitmapType) {
 		this.bitmapType = bitmapType;
-		this.blockType = blockType;
 	}
 
 	public int getBitmapType() {
 		return bitmapType;
-	}
-
-	public BlockType getBlockType() {
-		return blockType;
 	}
 
 }
