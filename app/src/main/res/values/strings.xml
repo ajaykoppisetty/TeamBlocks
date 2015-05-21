@@ -27,6 +27,11 @@
     <string name="error_msg_not_delivered_title">Connection Error</string>
     <string name="error_msg_not_delivered_message">Sorry, but there seems to be a problem with your network connection, please retry later!</string>
 
+    <string name="settings_about">About</string>
+    <string name="settings_credits">Credits</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="settings_logout">Logout</string>
+
     <string name="about_version">Version %1$s</string>
     <string name="about_title">About</string>
     <string name="about_msg">
@@ -77,4 +82,5 @@
     </string>
     <string name="feedback_ok">Rate DoubleStacks</string>
     <string name="feedback_cancel">No thanks</string>
+
 </resources>

@@ -26,7 +26,7 @@ public class SettingsFragment extends AbstractFragment {
 	@InjectView(R.id.text_about) TextView aboutView;
 	@InjectView(R.id.text_credits) TextView creditsView;
 	@InjectView(R.id.text_feedback) TextView feedbackView;
-
+	@InjectView(R.id.text_logout) TextView logoutView;
 
 	public SettingsFragment() {
 		super(R.layout.fragment_settings);
@@ -62,6 +62,13 @@ public class SettingsFragment extends AbstractFragment {
 			}
 		});
 		feedbackDialog.setNegativeButton(R.string.feedback_cancel, null);
+
+		logoutView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				actionListener.onLogoutClicked();
+			}
+		});
 	}
 
 

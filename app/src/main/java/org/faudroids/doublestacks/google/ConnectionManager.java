@@ -91,11 +91,6 @@ public class ConnectionManager implements MessageSender {
 	}
 
 
-	public Room getConnectedRoom() {
-		return connectedRoom;
-	}
-
-
 	public String getCurrentPlayerId() {
 		return connectedRoom.getParticipantId(Games.Players.getCurrentPlayerId(googleApiClient));
 	}

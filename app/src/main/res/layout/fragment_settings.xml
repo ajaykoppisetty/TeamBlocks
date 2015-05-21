@@ -52,7 +52,7 @@
 
                 <TextView
                     android:id="@+id/text_about"
-                    android:text="About"
+                    android:text="@string/settings_about"
                     style="@style/SettingsEntry"
                     />
 
@@ -60,7 +60,7 @@
 
                 <TextView
                     android:id="@+id/text_credits"
-                    android:text="Credits"
+                    android:text="@string/settings_credits"
                     style="@style/SettingsEntry"
                     />
 
@@ -68,7 +68,15 @@
 
                 <TextView
                     android:id="@+id/text_feedback"
-                    android:text="Feedback"
+                    android:text="@string/settings_feedback"
+                    style="@style/SettingsEntry"
+                    />
+
+                <include layout="@layout/divider"/>
+
+                <TextView
+                    android:id="@+id/text_logout"
+                    android:text="@string/settings_logout"
                     style="@style/SettingsEntry"
                     />
 

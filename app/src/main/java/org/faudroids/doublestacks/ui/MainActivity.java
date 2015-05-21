@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.example.games.basegameutils.BaseGameUtils;
@@ -145,6 +146,16 @@ public class MainActivity extends RoboActivity implements
 	public void onLoginClicked() {
 		loginClicked = true;
 		googleApiClient.connect();
+	}
+
+
+	@Override
+	public void onLogoutClicked() {
+		//  log out and restart
+		Games.signOut(googleApiClient);
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+		finish();
 	}
 
 
