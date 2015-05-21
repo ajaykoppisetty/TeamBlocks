@@ -96,6 +96,16 @@ public class ConnectionManager implements MessageSender {
 	}
 
 
+	public String getCurrentPlayerId() {
+		return connectedRoom.getParticipantId(Games.Players.getCurrentPlayerId(googleApiClient));
+	}
+
+
+	public List<String> getPlayerIds() {
+		return connectedRoom.getParticipantIds();
+	}
+
+
 	@Override
 	public void sendMessage(Serializable data, boolean reliable) {
 		// serialize data

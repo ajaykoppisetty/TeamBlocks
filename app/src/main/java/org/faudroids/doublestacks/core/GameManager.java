@@ -23,6 +23,7 @@ public class GameManager {
 	private final BlockGroupFactory blockGroupFactory;
 
 	private GameUpdateListener gameUpdateListener = null;
+	private boolean isLeftPlayer;
 
 	private int currentScore = 0;
 	private GameTickRunnable tickRunnable = null;
@@ -73,9 +74,10 @@ public class GameManager {
 	}
 
 
-	public void startGame(GameUpdateListener gameUpdateListener) {
+	public void startGame(GameUpdateListener gameUpdateListener, boolean isLeftPlayer) {
 		Timber.d("starting game");
 		this.gameUpdateListener = gameUpdateListener;
+		this.isLeftPlayer = isLeftPlayer;
 		this.field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 		this.partnerField = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 		this.tickRunnable = new GameTickRunnable();
@@ -195,7 +197,8 @@ public class GameManager {
 			nextGroup = blockGroupFactory.createRandom();
 			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - activeGroup.getYSize());
 			int xPos = (Constants.BLOCKS_COUNT_X - activeGroup.getXSize()) / 2;
-			activeGroup.setxPos(xPos);
+			int xOffset = isLeftPlayer ? -2 : 2;
+			activeGroup.setxPos(xPos + xOffset);
 
 			// check for game end
 			for (Location blockLocation : activeGroup.getAbsoluteLocations()) {

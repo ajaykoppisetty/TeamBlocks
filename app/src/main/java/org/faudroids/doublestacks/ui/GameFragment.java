@@ -20,6 +20,7 @@ import org.faudroids.doublestacks.core.GameUpdateListener;
 import org.faudroids.doublestacks.google.ConnectionManager;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -120,7 +121,12 @@ public class GameFragment extends AbstractFragment implements
 		previewHolder.setFormat(PixelFormat.TRANSPARENT);
 
 		// start game
-		gameManager.startGame(this);
+		String myId = connectionManager.getCurrentPlayerId();
+		List<String> allIds = connectionManager.getPlayerIds();
+		allIds.remove(myId);
+		String partnerId = allIds.get(0);
+		boolean isLeftPlayer = myId.compareTo(partnerId) < 0;
+		gameManager.startGame(this, isLeftPlayer);
 	}
 
 
