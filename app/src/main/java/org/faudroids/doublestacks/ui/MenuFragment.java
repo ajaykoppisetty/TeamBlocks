@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
@@ -54,7 +55,9 @@ public class MenuFragment extends AbstractFragment implements
 	@InjectView(R.id.button_quick_game) Button quickGameButton;
 	@InjectView(R.id.button_invite) Button inviteButton;
 	@InjectView(R.id.button_view_invitations) Button viewInvitationsButton;
-	@InjectView(R.id.button_settings) Button settingsButton;
+	@InjectView(R.id.button_exit) Button exitButton;
+	@InjectView(R.id.button_settings)
+	ImageButton settingsButton;
 
 
 	public MenuFragment() {
@@ -87,6 +90,12 @@ public class MenuFragment extends AbstractFragment implements
 			public void onClick(View v) {
 				spinnerUtils.showSpinner();
 				showInvitations();
+			}
+		});
+		exitButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getActivity().finish();
 			}
 		});
 		settingsButton.setOnClickListener(new View.OnClickListener() {

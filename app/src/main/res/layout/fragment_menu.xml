@@ -32,12 +32,23 @@
             />
 
         <Button
-            android:id="@+id/button_settings"
-            android:text="@string/menu_settings"
+            android:id="@+id/button_exit"
+            android:text="@string/menu_exit"
             style="@style/MenuButton"
             />
 
     </LinearLayout>
+
+
+    <ImageButton
+        android:id="@+id/button_settings"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_settings_selector"
+        android:layout_margin="10dp"
+        />
 
     <include layout="@layout/spinner"/>
 
