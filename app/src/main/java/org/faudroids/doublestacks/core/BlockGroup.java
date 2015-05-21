@@ -86,28 +86,6 @@ public class BlockGroup implements Serializable {
 	}
 
 
-	public static BlockGroup createRandom() {
-		int random = (int) (Math.random() * 7);
-		switch (random) {
-			case 0:
-				return createBox();
-			case 1:
-				return createL();
-			case 2:
-				return createLMirrored();
-			case 3:
-				return createI();
-			case 4:
-				return createS();
-			case 5:
-				return createZ();
-			case 6:
-				return createT();
-		}
-		throw new IllegalStateException("not soooo random ...");
-	}
-
-
 	private static Block createRandomBlock() {
 		int bitmapType = (int) (Math.random() * Constants.BLOCK_TYPE_COUNT);
 		return new Block(bitmapType);

@@ -20,6 +20,7 @@ public class GameManager {
 	// TODO put some awesome game logic here
 
 	private final MessageManager messageManager;
+	private final BlockGroupFactory blockGroupFactory;
 
 	private GameUpdateListener gameUpdateListener = null;
 
@@ -36,8 +37,9 @@ public class GameManager {
 
 
 	@Inject
-	GameManager(MessageManager messageManager) {
+	GameManager(MessageManager messageManager, BlockGroupFactory blockGroupFactory) {
 		this.messageManager = messageManager;
+		this.blockGroupFactory = blockGroupFactory;
 	}
 
 
@@ -77,7 +79,7 @@ public class GameManager {
 		this.field = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 		this.partnerField = new Block[Constants.BLOCKS_COUNT_X][Constants.BLOCKS_COUNT_Y];
 		this.tickRunnable = new GameTickRunnable();
-		this.nextGroup = BlockGroup.createRandom();
+		this.nextGroup = blockGroupFactory.createRandom();
 		new Thread(tickRunnable).start();
 	}
 
@@ -185,7 +187,7 @@ public class GameManager {
 			Timber.d("Creating new group");
 			// create new group
 			activeGroup = nextGroup;
-			nextGroup = BlockGroup.createRandom();
+			nextGroup = blockGroupFactory.createRandom();
 			activeGroup.setyPos(Constants.BLOCKS_COUNT_Y - activeGroup.getYSize());
 			int xPos = (Constants.BLOCKS_COUNT_X - activeGroup.getXSize()) / 2;
 			activeGroup.setxPos(xPos);
