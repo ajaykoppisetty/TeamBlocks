@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -109,7 +107,7 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() - 1);
-		sendUnreliableUpdate();
+		sendUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -128,7 +126,7 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() + 1);
-		sendUnreliableUpdate();
+		sendUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -150,19 +148,21 @@ public class GameManager {
 
 		// update group
 		activeGroup = rotatedGroup;
-		sendUnreliableUpdate();
+		sendUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
 
 	public void onOneDownClicked() {
 		if (activeGroup == null) return;
-		List<Integer> removedRows = null;
-		if (!moveActiveGroupDown()) {
-			removedRows = checkAndRemoveCompletedLines();
+
+		boolean rowRemoved= !moveActiveGroupDown();
+		if (rowRemoved) {
+			sendUpdate(true);
+			checkAndRemoveCompletedLines();
+		} else {
+			sendUpdate(false);
 		}
-		if (removedRows != null) sendReliableUpdate(removedRows);
-		else sendUnreliableUpdate();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -170,8 +170,8 @@ public class GameManager {
 	public void onAllDownClicked() {
 		if (activeGroup == null) return;
 		while (moveActiveGroupDown()); // move all the way down
-		List<Integer> removedLines = checkAndRemoveCompletedLines();
-		sendReliableUpdate(removedLines);
+		sendUpdate(true);
+		checkAndRemoveCompletedLines();
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -180,8 +180,6 @@ public class GameManager {
 	 * Called when sufficient time has passed that blocks should fall down.
 	 */
 	private void onGameTick() {
-		List<Integer> removedLines = new ArrayList<>();
-
 		// create / move active group
 		if (activeGroup == null) {
 			Timber.d("Creating new group");
@@ -201,14 +199,13 @@ public class GameManager {
 				}
 			}
 
-		} else {
-			if (!moveActiveGroupDown()) {
-				removedLines = checkAndRemoveCompletedLines();
-			}
-		}
+			sendUpdate(true);
 
-		// send full field update
-		sendReliableUpdate(removedLines);
+		} else {
+			boolean removedRow = !moveActiveGroupDown();
+			sendUpdate(true);
+			if (removedRow) checkAndRemoveCompletedLines();
+		}
 
 		// update listeners
 		gameUpdateListener.onFieldChanged();
@@ -254,9 +251,8 @@ public class GameManager {
 	}
 
 
-	private List<Integer> checkAndRemoveCompletedLines() {
-		// indices of completed lines (adjusted for moving down top lines!!)
-		List<Integer> completedRows = new ArrayList<>();
+	private void checkAndRemoveCompletedLines() {
+		int removedRows = 0;
 
 		rowLabel : for (int y = 0; y < Constants.BLOCKS_COUNT_Y; ++y) {
 			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
@@ -264,17 +260,15 @@ public class GameManager {
 			}
 
 			removeRow(y);
-			completedRows.add(y);
+			++removedRows;
 			--y;
 		}
 
 		// update score
-		if (completedRows.size() > 0) {
-			currentScore += completedRows.size() * SCORE_PER_ROW;
+		if (removedRows > 0) {
+			currentScore += removedRows * SCORE_PER_ROW;
 			gameUpdateListener.onScoreChanged();
 		}
-
-		return completedRows;
 	}
 
 
@@ -310,32 +304,26 @@ public class GameManager {
 
 		// update complete partner field
 		if (isReliable) {
-			for (int row : update.getRemovedRows()) {
-				currentScore += update.getRemovedRows().size() * SCORE_PER_ROW;
-				removeRow(row);
-			}
 			partnerField = update.getField();
+			checkAndRemoveCompletedLines();
 		}
 
 		// update active group
 		partnerActiveGroup = update.getActiveGroup();
 
 		gameUpdateListener.onFieldChanged();
-		if (isReliable) gameUpdateListener.onScoreChanged();
-
-		// TODO potential race condition here where both clients place their active block at the same time but cannot remove a completed line
 	}
 
 
-	private void sendReliableUpdate(List<Integer> removedRows) {
-		FieldUpdate update = new FieldUpdate(activeGroup, field, removedRows);
-		messageManager.sendMessage(update, true);
+	private void sendUpdate(boolean isReliable) {
+		FieldUpdate update;
+		if (isReliable) update = new FieldUpdate(activeGroup, field);
+		else update = new FieldUpdate(activeGroup);
+		messageManager.sendMessage(update, isReliable);
 	}
 
 
-	private void sendUnreliableUpdate() {
-		FieldUpdate update = new FieldUpdate(activeGroup);
-		messageManager.sendMessage(update, false);
+	private void sendUpdate() {
 	}
 
 
