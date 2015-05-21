@@ -24,15 +24,15 @@
      id="defs4">
     <linearGradient
        inkscape:collect="always"
-       id="linearGradient5315">
+       id="linearGradient4317">
       <stop
-         style="stop-color:#bb0000;stop-opacity:1"
+         style="stop-color:#00ac00;stop-opacity:1"
          offset="0"
-         id="stop5317" />
+         id="stop4319" />
       <stop
-         style="stop-color:#fa0000;stop-opacity:1"
+         style="stop-color:#18cc00;stop-opacity:1"
          offset="1"
-         id="stop5319" />
+         id="stop4321" />
     </linearGradient>
     <linearGradient
        id="linearGradient5179"
@@ -78,11 +78,11 @@
        y2="1025.1644" />
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient5315"
-       id="linearGradient4312"
+       xlink:href="#linearGradient4317"
+       id="linearGradient4575"
        gradientUnits="userSpaceOnUse"
        x1="265"
-       y1="1052.3622"
+       y1="1052.3621"
        x2="265"
        y2="1022.3621" />
   </defs>
@@ -94,16 +94,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.9993027"
-     inkscape:cx="9.8017692"
-     inkscape:cy="8.04369"
+     inkscape:cx="81.617825"
+     inkscape:cy="61.881757"
      inkscape:document-units="px"
-     inkscape:current-layer="use4641-4"
+     inkscape:current-layer="use4641-4-6"
      showgrid="true"
      units="px"
-     inkscape:window-width="1916"
-     inkscape:window-height="1143"
-     inkscape:window-x="1680"
-     inkscape:window-y="36"
+     inkscape:window-width="1362"
+     inkscape:window-height="729"
+     inkscape:window-x="0"
+     inkscape:window-y="18"
      inkscape:window-maximized="0"
      inkscape:snap-bbox="true"
      inkscape:snap-intersection-paths="false"
@@ -845,7 +845,7 @@
        id="use4641-4"
        transform="translate(-50,-64.999845)">
       <rect
-         style="opacity:0.3;fill:#fafeaf;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.47708118;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         style="opacity:0.2;fill:#fafeaf;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.47708118;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
          id="rect4785-6"
          width="28.522919"
          height="28.523005"
@@ -853,7 +853,7 @@
          y="1023.1006"
          ry="3.0560534" />
       <rect
-         style="opacity:0.3;fill:url(#linearGradient4310);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.03400004;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         style="opacity:0.2;fill:url(#linearGradient4310);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.03400004;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
          id="rect4787-0"
          width="24.46697"
          height="24.466993"
@@ -927,7 +927,7 @@
        id="use4641-4-6"
        transform="translate(-50,-34.999931)">
       <rect
-         style="opacity:1;fill:#ff5e5e;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.47708118;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         style="opacity:1;fill:#78ff60;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.47708118;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
          id="rect4785-6-3"
          width="28.522919"
          height="28.523005"
@@ -935,7 +935,7 @@
          y="1023.1006"
          ry="3.0560534" />
       <rect
-         style="opacity:1;fill:url(#linearGradient4312);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.03400004;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         style="opacity:1;fill:url(#linearGradient4575);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.03400004;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
          id="rect4787-0-0"
          width="24.46697"
          height="24.466993"
@@ -1013,7 +1013,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1022,7 +1022,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1031,7 +1031,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1040,7 +1040,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1049,7 +1049,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1058,7 +1058,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1067,7 +1067,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1076,7 +1076,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1085,7 +1085,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1094,7 +1094,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1103,7 +1103,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1112,7 +1112,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1121,7 +1121,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1130,7 +1130,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1139,7 +1139,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1148,7 +1148,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1157,7 +1157,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1166,7 +1166,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1175,7 +1175,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <use
        x="0"
        y="0"
@@ -1184,7 +1184,7 @@
        transform="translate(0,30)"
        width="100%"
        height="100%"
-       style="opacity:0.3" />
+       style="opacity:0.2" />
     <ellipse
        ry="1.2153398"
        rx="1.3037281"
