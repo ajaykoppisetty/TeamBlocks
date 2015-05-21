@@ -123,7 +123,7 @@ public class MenuFragment extends AbstractFragment implements
 
 	@Override
 	public void onActivityResult(int request, int response, Intent data) {
-		spinnerUtils.hideSpinner();
+		if (spinnerUtils.isSpinnerVisible()) spinnerUtils.hideSpinner();
 		switch (request) {
 			case REQUEST_INVITE:
 				if (response != Activity.RESULT_OK) return;
