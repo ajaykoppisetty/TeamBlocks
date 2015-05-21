@@ -13,17 +13,30 @@ public class FieldUpdate implements Serializable {
 
 	private final Block[][] field;
 	private final BlockGroup activeGroup;
+	private final boolean isGameOver;
 
 	private int epoch;
 	private int seqNum;
 
+	/**
+	 * Creates a new GAME OVER update.
+	 */
+	public FieldUpdate() {
+		this(null, null, true);
+	}
+
 	public FieldUpdate(BlockGroup activeGroup) {
-		this(activeGroup, null);
+		this(activeGroup, null, false);
 	}
 
 	public FieldUpdate(BlockGroup activeGroup, Block[][] field) {
+		this(activeGroup, field, false);
+	}
+
+	public FieldUpdate(BlockGroup activeGroup, Block[][] field, boolean isGameOver) {
 		this.activeGroup = activeGroup;
 		this.field = field;
+		this.isGameOver = isGameOver;
 	}
 
 	public Block[][] getField() {
@@ -50,6 +63,10 @@ public class FieldUpdate implements Serializable {
 		return activeGroup;
 	}
 
+	public boolean isGameOver() {
+		return isGameOver;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -58,11 +75,12 @@ public class FieldUpdate implements Serializable {
 		return Objects.equal(epoch, that.epoch) &&
 				Objects.equal(seqNum, that.seqNum) &&
 				Objects.equal(field, that.field) &&
-				Objects.equal(activeGroup, that.activeGroup);
+				Objects.equal(activeGroup, that.activeGroup) &&
+				Objects.equal(isGameOver, that.isGameOver);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(field, activeGroup, epoch, seqNum);
+		return Objects.hashCode(field, activeGroup, epoch, seqNum, isGameOver);
 	}
 }

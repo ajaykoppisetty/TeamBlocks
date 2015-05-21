@@ -95,6 +95,11 @@ public class GameManager {
 	}
 
 
+	public boolean isGameRunning() {
+		return tickRunnable != null;
+	}
+
+
 	public void onLeftClicked() {
 		if (activeGroup == null) return;
 
@@ -109,7 +114,7 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() - 1);
-		sendUpdate();
+		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -128,7 +133,7 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() + 1);
-		sendUpdate();
+		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -150,7 +155,7 @@ public class GameManager {
 
 		// update group
 		activeGroup = rotatedGroup;
-		sendUpdate();
+		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
 	}
 
@@ -195,7 +200,9 @@ public class GameManager {
 			// check for game end
 			for (Location blockLocation : activeGroup.getAbsoluteLocations()) {
 				if (field[blockLocation.x][blockLocation.y] != null) {
+					// send game over message
 					gameUpdateListener.onGameOver();
+					messageManager.sendMessage(new FieldUpdate(), true);
 					stopGame();
 					return;
 				}
@@ -304,6 +311,13 @@ public class GameManager {
 			return;
 		}
 
+		// check for game over
+		if (update.isGameOver()) {
+			gameUpdateListener.onGameOver();
+			stopGame();
+			return;
+		}
+
 		// update complete partner field
 		if (isReliable) {
 			partnerField = update.getField();
@@ -322,10 +336,6 @@ public class GameManager {
 		if (isReliable) update = new FieldUpdate(activeGroup, field);
 		else update = new FieldUpdate(activeGroup);
 		messageManager.sendMessage(update, isReliable);
-	}
-
-
-	private void sendUpdate() {
 	}
 
 

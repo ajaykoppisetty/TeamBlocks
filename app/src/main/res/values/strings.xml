@@ -21,6 +21,12 @@
     <string name="quit_game_message">Quit the current game?</string>
     <string name="quit_game_action_quit">Quit</string>
 
+    <string name="error_connection_lost_title">Connection lost</string>
+    <string name="error_connection_lost_message">Sorry, but the connection to the game has been lost. Did another player leave the game?</string>
+
+    <string name="error_msg_not_delivered_title">Connection Error</string>
+    <string name="error_msg_not_delivered_message">Sorry, but there seems to be a problem with your network connection, please retry later!</string>
+
     <string name="about_version">Version %1$s</string>
     <string name="about_title">About</string>
     <string name="about_msg">

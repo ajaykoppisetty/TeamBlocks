@@ -24,7 +24,6 @@ import java.io.Serializable;
 import javax.inject.Inject;
 
 import roboguice.inject.InjectView;
-import timber.log.Timber;
 
 public class GameFragment extends AbstractFragment implements
 		ConnectionManager.ConnectionListener,
@@ -69,7 +68,9 @@ public class GameFragment extends AbstractFragment implements
 						.setPositiveButton(R.string.quit_game_action_quit, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								stopGame();
+								gameManager.stopGame();
+								connectionManager.leaveRoom();
+								actionListener.onGameStopped();
 							}
 						})
 						.setNegativeButton(android.R.string.cancel, null)
@@ -145,13 +146,48 @@ public class GameFragment extends AbstractFragment implements
 
 	@Override
 	public void onConnectionLost() {
-		stopGame();
+		if (!gameManager.isGameRunning()) return;
+		gameManager.stopGame();
+		connectionManager.leaveRoom();
+		showDialog(new AlertDialog.Builder(getActivity())
+				.setTitle(R.string.error_connection_lost_title)
+				.setMessage(R.string.error_connection_lost_message)
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						actionListener.onGameStopped();
+					}
+				})
+				.setOnCancelListener(new DialogInterface.OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						actionListener.onGameStopped();
+					}
+				})
+				.create());
 	}
 
 
 	@Override
 	public void onReliableMsgSendError() {
-		Timber.e("failed to send reliable msgs");
+		gameManager.stopGame();
+		connectionManager.leaveRoom();
+		showDialog(new AlertDialog.Builder(getActivity())
+				.setTitle(R.string.error_msg_not_delivered_title)
+				.setMessage(R.string.error_msg_not_delivered_message)
+				.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						actionListener.onGameStopped();
+					}
+				})
+				.setOnCancelListener(new DialogInterface.OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						actionListener.onGameStopped();
+					}
+				})
+				.create());
 	}
 
 
@@ -187,13 +223,6 @@ public class GameFragment extends AbstractFragment implements
 				})
 				.setCancelable(false)
 				.create());
-	}
-
-
-	private void stopGame() {
-		connectionManager.leaveRoom();
-		actionListener.onGameStopped();
-		gameManager.stopGame();
 	}
 
 
