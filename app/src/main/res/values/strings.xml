@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DoubleStacks</string>
+    <string name="app_name">Team Blocks</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -42,7 +42,7 @@
     <string name="about_title">About</string>
     <string name="about_msg">
         This app was developed as part of the Android Challenge: one app every month for one year
-        (think of it as a New Year\'s resolution). DoubleStacks is our project for May.&lt;br/&gt;
+        (think of it as a New Year\'s resolution). Team Blocks is our project for May.&lt;br/&gt;
         &lt;br/&gt;
         If you want to know more be sure to check out our &lt;a href=&quot;http://faudroids.org&quot;&gt;website&lt;/a&gt;.
         This app is &lt;b&gt;open source&lt;/b&gt; and you can find everything on &lt;a href=&quot;https://github.com/FauDroids/DoubleStacks&quot;&gt;GitHub&lt;/a&gt;.&lt;br/&gt;
@@ -80,13 +80,13 @@
         We would love to hear from you!
         &lt;br&gt;
         &lt;br&gt;
-        DoubleStacks is still in a very early stage and we need your help to determine if you enjoyed the app
+        Team Blocks is still in a very early stage and we need your help to determine if you enjoyed the app
         or what improvements need to be done.
         &lt;br&gt;
         &lt;br&gt;
         So please consider heading over to the PlayStore and let uns know what you think!
     </string>
-    <string name="feedback_ok">Rate DoubleStacks</string>
+    <string name="feedback_ok">Rate Team Blocks</string>
     <string name="feedback_cancel">No thanks</string>
 
 </resources>
