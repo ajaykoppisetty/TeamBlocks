@@ -6,6 +6,16 @@
 
     <include layout="@layout/background"/>
 
+    <ImageView
+        android:id="@+id/banner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/banner"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/banner_padding_top"
+        />
+
     <com.google.android.gms.common.SignInButton
         android:id="@+id/login_button"
         android:layout_width="match_parent"
