@@ -101,6 +101,11 @@ public class ConnectionManager implements MessageSender {
 	}
 
 
+	public void unlockAchivement(String achivementId) {
+		Games.Achievements.unlock(googleApiClient, achivementId);
+	}
+
+
 	@Override
 	public void sendMessage(Serializable data, boolean reliable) {
 		// serialize data

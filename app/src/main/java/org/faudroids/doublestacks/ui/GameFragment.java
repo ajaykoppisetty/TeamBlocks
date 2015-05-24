@@ -17,6 +17,7 @@ import android.widget.TextView;
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.core.GameManager;
 import org.faudroids.doublestacks.core.GameUpdateListener;
+import org.faudroids.doublestacks.google.AchievementManager;
 import org.faudroids.doublestacks.google.ConnectionManager;
 
 import java.io.Serializable;
@@ -43,6 +44,7 @@ public class GameFragment extends AbstractFragment implements
 	@InjectView(R.id.surface_view_preview) private SurfaceView previewSurfaceView;
 
 	@Inject private ConnectionManager connectionManager;
+	@Inject private AchievementManager achievementManager;
 	@Inject private GameManager gameManager;
 	@Inject private BitmapManager bitmapManager;
 	private GraphicsManager graphicsManager = null;
@@ -212,6 +214,7 @@ public class GameFragment extends AbstractFragment implements
 	@Override
 	public void onScoreChanged() {
 		scoreView.setText(String.valueOf(gameManager.getCurrentScore()));
+		achievementManager.onScoreChanged(gameManager.getCurrentScore());
 	}
 
 
