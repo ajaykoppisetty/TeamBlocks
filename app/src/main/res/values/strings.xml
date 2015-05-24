@@ -27,6 +27,12 @@
     <string name="error_msg_not_delivered_title">Connection Error</string>
     <string name="error_msg_not_delivered_message">Sorry, but there seems to be a problem with your network connection, please retry later!</string>
 
+    <string name="tutorial_1">Your blocks are blue</string>
+    <string name="tutorial_2">Your friend\'s blocks are yellow</string>
+    <string name="tutorial_3">When blue and yellow overlap they turn green</string>
+    <string name="tutorial_4">Only green lines disappear, so work together!</string>
+
+    <string name="settings_help">Help</string>
     <string name="settings_about">About</string>
     <string name="settings_credits">Credits</string>
     <string name="settings_feedback">Feedback</string>

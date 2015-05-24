@@ -49,15 +49,14 @@ public class MenuFragment extends AbstractFragment implements
 	}
 
 
-	@Inject GoogleApiClient googleApiClient;
-	@Inject ConnectionManager connectionManager;
+	@Inject private GoogleApiClient googleApiClient;
+	@Inject private ConnectionManager connectionManager;
 
-	@InjectView(R.id.button_quick_game) Button quickGameButton;
-	@InjectView(R.id.button_invite) Button inviteButton;
-	@InjectView(R.id.button_view_invitations) Button viewInvitationsButton;
-	@InjectView(R.id.button_exit) Button exitButton;
-	@InjectView(R.id.button_settings)
-	ImageButton settingsButton;
+	@InjectView(R.id.button_quick_game) private Button quickGameButton;
+	@InjectView(R.id.button_invite) private Button inviteButton;
+	@InjectView(R.id.button_view_invitations) private Button viewInvitationsButton;
+	@InjectView(R.id.button_exit) private Button exitButton;
+	@InjectView(R.id.button_settings) private ImageButton settingsButton;
 
 
 	public MenuFragment() {

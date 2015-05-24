@@ -41,6 +41,10 @@ public class MainActivity extends RoboActivity implements
 	@Inject private GoogleApiClient googleApiClient;
 	@Inject private WindowUtils windowUtils;
 
+	@Inject private TutorialUtils tutorialUtils;
+	// flag for showing menu after tutorial
+	private MenuFragment menuFragment = null;
+
 	@InjectView(R.id.spinner) private View spinnerContainer;
 	@InjectView(R.id.spinner_image) private ImageView spinnerImage;
 	protected SpinnerUtils spinnerUtils;
@@ -88,7 +92,16 @@ public class MainActivity extends RoboActivity implements
 			invitation = connectionHint.getParcelable(Multiplayer.EXTRA_INVITATION);
 		}
 		spinnerUtils.hideSpinner();
-		showFragment(MenuFragment.createInstance(invitation), true);
+
+		// check for tutorial
+		MenuFragment fragment = MenuFragment.createInstance(invitation);
+		if (tutorialUtils.shouldShowTutorial()) {
+			tutorialUtils.onShowTutorial();
+			onTutorialStart();
+			this.menuFragment = fragment;
+		} else {
+			showFragment(fragment, true);
+		}
 	}
 
 
@@ -174,6 +187,19 @@ public class MainActivity extends RoboActivity implements
 	@Override
 	public void onSettingsClicked() {
 		showFragment(new SettingsFragment(), true);
+	}
+
+
+	@Override
+	public void onTutorialStart() {
+		showFragment(new TutorialFragment(), true);
+	}
+
+
+	@Override
+	public void onTutorialEnd() {
+		getFragmentManager().popBackStack();
+		if (menuFragment != null) showFragment(menuFragment, true);
 	}
 
 

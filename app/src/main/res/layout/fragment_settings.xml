@@ -44,6 +44,14 @@
                 >
 
                 <TextView
+                    android:id="@+id/text_help"
+                    android:text="@string/settings_help"
+                    style="@style/SettingsEntry"
+                    />
+
+                <include layout="@layout/divider"/>
+
+                <TextView
                     android:id="@+id/text_version"
                     style="@style/SettingsEntry"
                     />

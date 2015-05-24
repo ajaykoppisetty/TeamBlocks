@@ -7,5 +7,7 @@ public interface ActionListener {
 	void onGameStarted();
 	void onGameStopped();
 	void onSettingsClicked();
+	void onTutorialStart();
+	void onTutorialEnd();
 
 }

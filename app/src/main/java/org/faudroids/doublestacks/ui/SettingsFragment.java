@@ -22,6 +22,7 @@ import timber.log.Timber;
 public class SettingsFragment extends AbstractFragment {
 
 	@InjectView(R.id.button_back) ImageButton backButton;
+	@InjectView(R.id.text_help) TextView helpView;
 	@InjectView(R.id.text_version) TextView versionView;
 	@InjectView(R.id.text_about) TextView aboutView;
 	@InjectView(R.id.text_credits) TextView creditsView;
@@ -42,6 +43,12 @@ public class SettingsFragment extends AbstractFragment {
 			}
 		});
 
+		helpView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				actionListener.onTutorialStart();
+			}
+		});
 
 		versionView.setText(getString(R.string.about_version, getVersion()));
 		setOnClickDialogForTextView(aboutView, R.string.about_title, R.string.about_msg);
