@@ -3,9 +3,12 @@ package org.faudroids.doublestacks.app;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.faudroids.doublestacks.BuildConfig;
 import org.faudroids.doublestacks.google.GoogleModule;
 
+import io.fabric.sdk.android.Fabric;
 import roboguice.RoboGuice;
 import timber.log.Timber;
 
@@ -24,15 +27,13 @@ public final class DoubleStacksApp extends Application {
 		if (BuildConfig.DEBUG) {
 			Timber.plant(new Timber.DebugTree());
 		} else {
-			throw new IllegalStateException("missing crashlytics");
-			// Fabric.with(this, new Crashlytics());
-			// Timber.plant(new CrashReportingTree());
+			Fabric.with(this, new Crashlytics());
+			Timber.plant(new CrashReportingTree());
 		}
 	}
 
 
-	/*
-	private static final class CrashReportingTree extends Timber.HollowTree {
+	private static final class CrashReportingTree extends Timber.Tree {
 
 		@Override
 		public void e(String msg, Object... args) {
@@ -56,7 +57,12 @@ public final class DoubleStacksApp extends Application {
 			Crashlytics.logException(e);
 		}
 
+
+		@Override
+		protected void log(int priority, String tag, String message, Throwable t) {
+			// nothing to do here
+		}
+
 	}
-	*/
 
 }
