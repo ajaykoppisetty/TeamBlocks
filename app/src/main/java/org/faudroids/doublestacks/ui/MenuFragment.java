@@ -13,7 +13,6 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 
 import org.faudroids.doublestacks.R;
 import org.faudroids.doublestacks.google.ConnectionManager;
@@ -27,7 +26,6 @@ import roboguice.inject.InjectView;
 import timber.log.Timber;
 
 public class MenuFragment extends AbstractFragment implements
-		OnInvitationReceivedListener,
 		ConnectionManager.ConnectionListener {
 
 	private static final int
@@ -116,13 +114,11 @@ public class MenuFragment extends AbstractFragment implements
 	public void onResume() {
 		super.onResume();
 		connectionManager.registerConnectionListener(this);
-		Games.Invitations.registerInvitationListener(googleApiClient, this);
 	}
 
 
 	@Override
 	public void onPause() {
-		Games.Invitations.unregisterInvitationListener(googleApiClient);
 		connectionManager.unregisterConnectionListener();
 		super.onPause();
 	}
@@ -172,19 +168,6 @@ public class MenuFragment extends AbstractFragment implements
 
 
 	@Override
-	public void onInvitationReceived(Invitation invitation) {
-		Timber.d("Invitation received");
-		showInvitations();
-	}
-
-
-	@Override
-	public void onInvitationRemoved(String s) {
-		Timber.d("Invitation removed (" + s + ")");
-	}
-
-
-	@Override
 	public void showWaitingRoom(Intent waitingRoomIntent) {
 		startActivityForResult(waitingRoomIntent, REQUEST_WAITING_ROOM);
 	}
@@ -205,6 +188,11 @@ public class MenuFragment extends AbstractFragment implements
 	@Override
 	public void onMsg(Serializable data, boolean isReliable) {
 		// nothing to do here ...
+	}
+
+	@Override
+	public void onNewInvitation() {
+		showInvitations();
 	}
 
 

@@ -221,6 +221,12 @@ public class GameFragment extends AbstractFragment implements
 
 
 	@Override
+	public void onNewInvitation() {
+		// nothing to do for now
+	}
+
+
+	@Override
 	public void onFieldChanged() {
 		if (graphicsManager != null) graphicsManager.redrawGraphics();
 	}

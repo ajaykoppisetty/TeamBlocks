@@ -8,6 +8,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer;
@@ -35,10 +36,12 @@ import timber.log.Timber;
 @ContextSingleton
 public class ConnectionManager implements MessageSender {
 
+	private final CustomConnectionCallbackListener connectionCallbackListener = new CustomConnectionCallbackListener();
 	private final CustomRoomUpdateListener roomUpdateListener = new CustomRoomUpdateListener();
 	private final CustomMessageListeners messageListeners = new CustomMessageListeners();
 	private final CustomRoomStatusUpdateListener roomStatusUpdateListener = new CustomRoomStatusUpdateListener();
 	private final CustomMessageSentCallback messageSentCallback = new CustomMessageSentCallback();
+	private final CustomInvitationListener invitationListener = new CustomInvitationListener();
 
 	private final GoogleApiClient googleApiClient;
 
@@ -49,6 +52,18 @@ public class ConnectionManager implements MessageSender {
 	@Inject
 	ConnectionManager(GoogleApiClient googleApiClient) {
 		this.googleApiClient = googleApiClient;
+	}
+
+
+	public void connect() {
+		googleApiClient.registerConnectionCallbacks(connectionCallbackListener);
+		googleApiClient.connect();
+	}
+
+
+	public void disconnect() {
+		googleApiClient.disconnect();
+		googleApiClient.unregisterConnectionCallbacks(connectionCallbackListener);
 	}
 
 
@@ -94,6 +109,8 @@ public class ConnectionManager implements MessageSender {
 
 	public void leaveRoom() {
 		if (!isConnected()) return;
+		if (!isConnectedToRoom()) return;
+
 		Games.RealTimeMultiplayer.leave(googleApiClient, roomUpdateListener, connectedRoom.getRoomId());
 	}
 
@@ -101,6 +118,7 @@ public class ConnectionManager implements MessageSender {
 	public boolean isConnectedToRoom() {
 		return connectedRoom != null;
 	}
+
 
 	public String getCurrentPlayerId() {
 		return connectedRoom.getParticipantId(Games.Players.getCurrentPlayerId(googleApiClient));
@@ -130,7 +148,8 @@ public class ConnectionManager implements MessageSender {
 		} finally {
 			try {
 				if (out != null) out.close();
-			} catch (IOException ex) {  }
+			} catch (IOException ex) {
+			}
 		}
 
 		// send bytes
@@ -183,9 +202,29 @@ public class ConnectionManager implements MessageSender {
 	public interface ConnectionListener {
 
 		void showWaitingRoom(Intent waitingRoomIntent);
+
 		void onConnectionLost();
+
 		void onReliableMsgSendError();
+
 		void onMsg(Serializable data, boolean isReliable);
+
+		void onNewInvitation();
+
+	}
+
+
+	private class CustomConnectionCallbackListener implements GoogleApiClient.ConnectionCallbacks {
+
+		@Override
+		public void onConnected(Bundle bundle) {
+			Games.Invitations.registerInvitationListener(googleApiClient, invitationListener);
+		}
+
+		@Override
+		public void onConnectionSuspended(int i) {
+			Games.Invitations.unregisterInvitationListener(googleApiClient);
+		}
 
 	}
 
@@ -195,8 +234,10 @@ public class ConnectionManager implements MessageSender {
 		@Override
 		public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId) {
 			if (statusCode == GamesStatusCodes.STATUS_OK) return;
-			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_MESSAGE_SEND_FAILED) if (connectionListener != null) connectionListener.onReliableMsgSendError();
-			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_ROOM_NOT_JOINED) Timber.w("trying to send msg to unregister player");
+			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_MESSAGE_SEND_FAILED)
+				if (connectionListener != null) connectionListener.onReliableMsgSendError();
+			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_ROOM_NOT_JOINED)
+				Timber.w("trying to send msg to unregister player");
 		}
 
 	}
@@ -270,11 +311,13 @@ public class ConnectionManager implements MessageSender {
 			} finally {
 				try {
 					byteIn.close();
-				} catch (IOException ex) { }
+				} catch (IOException ex) {
+				}
 			}
 
 			// alert listener
-			if (connectionListener != null) connectionListener.onMsg(data, realTimeMessage.isReliable());
+			if (connectionListener != null)
+				connectionListener.onMsg(data, realTimeMessage.isReliable());
 		}
 
 	}
@@ -344,4 +387,21 @@ public class ConnectionManager implements MessageSender {
 			Timber.d("onP2PDisconnected");
 		}
 	}
+
+
+	private class CustomInvitationListener implements OnInvitationReceivedListener {
+
+		@Override
+		public void onInvitationReceived(Invitation invitation) {
+			Timber.d("Invitation received");
+			if (connectionListener != null) connectionListener.onNewInvitation();
+		}
+
+		@Override
+		public void onInvitationRemoved(String s) {
+			Timber.d("Invitation removed (" + s + ")");
+		}
+
+	}
+
 }

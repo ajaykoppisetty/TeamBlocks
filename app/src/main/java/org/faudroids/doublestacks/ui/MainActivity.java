@@ -18,6 +18,7 @@ import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import org.faudroids.doublestacks.R;
+import org.faudroids.doublestacks.google.ConnectionManager;
 
 import javax.inject.Inject;
 
@@ -38,6 +39,7 @@ public class MainActivity extends RoboActivity implements
 	private boolean autoStartLoginFlow = true;
 	private boolean loginClicked = false;
 
+	@Inject private ConnectionManager connectionManager;
 	@Inject private GoogleApiClient googleApiClient;
 	@Inject private WindowUtils windowUtils;
 
@@ -66,7 +68,7 @@ public class MainActivity extends RoboActivity implements
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		googleApiClient.registerConnectionCallbacks(this);
 		googleApiClient.registerConnectionFailedListener(this);
-		googleApiClient.connect();
+		connectionManager.connect();
 		spinnerUtils.showSpinner();
 	}
 
@@ -74,7 +76,7 @@ public class MainActivity extends RoboActivity implements
 	@Override
 	public void onStop() {
 		Timber.d("disconnecting from google api client");
-		googleApiClient.disconnect();
+		connectionManager.disconnect();
 		googleApiClient.unregisterConnectionCallbacks(this);
 		googleApiClient.unregisterConnectionFailedListener(this);
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
