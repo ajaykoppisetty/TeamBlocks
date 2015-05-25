@@ -15,7 +15,11 @@ import timber.log.Timber;
  */
 public class GameManager {
 
-	private static final int SCORE_PER_ROW = 10;
+	private static final int
+			SCORE_1_ROW = 10,
+			SCORE_2_ROWS = 30,
+			SCORE_3_ROWS = 50,
+			SCORE_4_ROWS = 80;
 
 	// TODO put some awesome game logic here
 
@@ -283,10 +287,21 @@ public class GameManager {
 		}
 
 		// update score
-		if (removedRows > 0) {
-			currentScore += removedRows * SCORE_PER_ROW;
-			gameUpdateListener.onScoreChanged();
+		switch (removedRows) {
+			case 1:
+				currentScore += SCORE_1_ROW;
+				break;
+			case 2:
+				currentScore += SCORE_2_ROWS;
+				break;
+			case 3:
+				currentScore += SCORE_3_ROWS;
+				break;
+			case 4:
+				currentScore += SCORE_4_ROWS;
+				break;
 		}
+		if (removedRows > 0) gameUpdateListener.onScoreChanged();
 	}
 
 
