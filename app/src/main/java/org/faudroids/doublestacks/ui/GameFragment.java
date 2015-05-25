@@ -241,6 +241,7 @@ public class GameFragment extends AbstractFragment implements
 
 	@Override
 	public void onGameOver() {
+		achievementManager.onGameFinished(gameManager.getCurrentScore());
 		showDialog(new AlertDialog.Builder(getActivity())
 				.setTitle(R.string.game_over_title)
 				.setMessage(getString(R.string.game_over_message, gameManager.getCurrentScore()))

@@ -15,6 +15,7 @@ import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 
 import org.faudroids.doublestacks.R;
+import org.faudroids.doublestacks.google.AchievementManager;
 import org.faudroids.doublestacks.google.ConnectionManager;
 
 import java.io.Serializable;
@@ -31,7 +32,8 @@ public class MenuFragment extends AbstractFragment implements
 	private static final int
 			REQUEST_INVITE = 43,
 			REQUEST_WAITING_ROOM = 44,
-			REQUEST_VIEW_INVITATIONS = 45;
+			REQUEST_VIEW_INVITATIONS = 45,
+			REQUEST_LEADERBOARD = 46;
 
 	private static final String EXTRA_INVITATION = "EXTRA_INVITATION";
 
@@ -49,10 +51,12 @@ public class MenuFragment extends AbstractFragment implements
 
 	@Inject private GoogleApiClient googleApiClient;
 	@Inject private ConnectionManager connectionManager;
+	@Inject private AchievementManager achievementManager;
 
 	@InjectView(R.id.button_quick_game) private Button quickGameButton;
 	@InjectView(R.id.button_invite) private Button inviteButton;
 	@InjectView(R.id.button_view_invitations) private Button viewInvitationsButton;
+	@InjectView(R.id.button_highscore) private Button highScoreButton;
 	@InjectView(R.id.button_exit) private ImageButton exitButton;
 	@InjectView(R.id.button_settings) private ImageButton settingsButton;
 
@@ -87,6 +91,12 @@ public class MenuFragment extends AbstractFragment implements
 			public void onClick(View v) {
 				spinnerUtils.showSpinner();
 				showInvitations();
+			}
+		});
+		highScoreButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivityForResult(achievementManager.getHighScoreIntent(), REQUEST_LEADERBOARD);
 			}
 		});
 		exitButton.setOnClickListener(new View.OnClickListener() {
@@ -162,6 +172,10 @@ public class MenuFragment extends AbstractFragment implements
 				Bundle extras = data.getExtras();
 				Invitation invitation = extras.getParcelable(Multiplayer.EXTRA_INVITATION);
 				connectionManager.acceptInvitation(invitation);
+				break;
+
+			case REQUEST_LEADERBOARD:
+				// nothing to do
 				break;
 		}
 	}

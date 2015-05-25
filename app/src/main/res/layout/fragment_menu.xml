@@ -44,7 +44,7 @@
 
         <Button
             android:id="@+id/button_highscore"
-            android:text="@string/menu_exit"
+            android:text="@string/menu_highscore"
             style="@style/MenuButton"
             />
 

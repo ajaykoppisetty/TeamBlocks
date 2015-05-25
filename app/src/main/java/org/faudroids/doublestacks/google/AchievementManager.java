@@ -1,6 +1,8 @@
 package org.faudroids.doublestacks.google;
 
 
+import android.content.Intent;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 
@@ -18,6 +20,9 @@ public class AchievementManager {
 			ACHIEVEMENT_500_POINTS = "CgkI_KePsJcKEAIQBQ",
 			ACHIEVEMENT_1000_POINTS = "CgkI_KePsJcKEAIQBg";
 
+	private static final String
+			LEADERBOARD_ID = "CgkI_KePsJcKEAIQCA";
+
 
 	private final GoogleApiClient googleApiClient;
 
@@ -33,6 +38,16 @@ public class AchievementManager {
 		else if (score >= 300) unlockAchievement(ACHIEVEMENT_300_POINTS);
 		else if (score >= 200) unlockAchievement(ACHIEVEMENT_200_POINTS);
 		else if (score >= 100) unlockAchievement(ACHIEVEMENT_100_POINTS);
+	}
+
+
+	public void onGameFinished(int finalScore) {
+		Games.Leaderboards.submitScore(googleApiClient, LEADERBOARD_ID, finalScore);
+	}
+
+
+	public Intent getHighScoreIntent() {
+		return Games.Leaderboards.getLeaderboardIntent(googleApiClient, LEADERBOARD_ID);
 	}
 
 
