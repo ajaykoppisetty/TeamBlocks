@@ -98,6 +98,10 @@ public class ConnectionManager implements MessageSender {
 	}
 
 
+	public boolean isConnectedToRoom() {
+		return connectedRoom != null;
+	}
+
 	public String getCurrentPlayerId() {
 		return connectedRoom.getParticipantId(Games.Players.getCurrentPlayerId(googleApiClient));
 	}
@@ -191,7 +195,7 @@ public class ConnectionManager implements MessageSender {
 		@Override
 		public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId) {
 			if (statusCode == GamesStatusCodes.STATUS_OK) return;
-			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_MESSAGE_SEND_FAILED) connectionListener.onReliableMsgSendError();
+			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_MESSAGE_SEND_FAILED) if (connectionListener != null) connectionListener.onReliableMsgSendError();
 			if (statusCode == GamesStatusCodes.STATUS_REAL_TIME_ROOM_NOT_JOINED) Timber.w("trying to send msg to unregister player");
 		}
 
@@ -244,7 +248,7 @@ public class ConnectionManager implements MessageSender {
 		private void showWaitingRoom() {
 			// get waiting room intent
 			Intent intent = Games.RealTimeMultiplayer.getWaitingRoomIntent(googleApiClient, connectedRoom, Integer.MAX_VALUE);
-			connectionListener.showWaitingRoom(intent);
+			if (connectionListener != null) connectionListener.showWaitingRoom(intent);
 		}
 
 	}
@@ -270,7 +274,7 @@ public class ConnectionManager implements MessageSender {
 			}
 
 			// alert listener
-			connectionListener.onMsg(data, realTimeMessage.isReliable());
+			if (connectionListener != null) connectionListener.onMsg(data, realTimeMessage.isReliable());
 		}
 
 	}
@@ -310,12 +314,14 @@ public class ConnectionManager implements MessageSender {
 		@Override
 		public void onConnectedToRoom(Room room) {
 			Timber.d("onConnectedToRoom");
+			connectedRoom = room;
 		}
 
 		@Override
 		public void onDisconnectedFromRoom(Room room) {
 			Timber.d("onDisconnectedFromRoom");
-			connectionListener.onConnectionLost();
+			connectedRoom = null;
+			if (connectionListener != null) connectionListener.onConnectionLost();
 		}
 
 		@Override

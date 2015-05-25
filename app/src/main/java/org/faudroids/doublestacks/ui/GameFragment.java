@@ -61,6 +61,12 @@ public class GameFragment extends AbstractFragment implements
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
+		// check for lost connection
+		if (!connectionManager.isConnectedToRoom()) {
+			actionListener.onGameStopped();
+			return;
+		}
+
 		// setup ui
 		homeButton.setOnClickListener(new View.OnClickListener() {
 			@Override
