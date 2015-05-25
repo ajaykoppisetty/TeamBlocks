@@ -103,6 +103,7 @@ public class GameManager {
 
 
 	public void onLeftClicked() {
+		if (!isGameRunning()) return;
 		if (activeGroup == null) return;
 
 		// check wall
@@ -122,6 +123,7 @@ public class GameManager {
 
 
 	public void onRightClicked() {
+		if (!isGameRunning()) return;
 		if (activeGroup == null) return;
 
 		// check wall
@@ -141,6 +143,7 @@ public class GameManager {
 
 
 	public void onRotateClicked() {
+		if (!isGameRunning()) return;
 		if (activeGroup == null) return;
 
 		// check field
@@ -163,6 +166,7 @@ public class GameManager {
 
 
 	public void onOneDownClicked() {
+		if (!isGameRunning()) return;
 		if (activeGroup == null) return;
 
 		boolean rowRemoved= !moveActiveGroupDown();
@@ -177,7 +181,9 @@ public class GameManager {
 
 
 	public void onAllDownClicked() {
+		if (!isGameRunning()) return;
 		if (activeGroup == null) return;
+
 		while (moveActiveGroupDown()); // move all the way down
 		sendUpdate(true);
 		checkAndRemoveCompletedLines();
@@ -305,7 +311,7 @@ public class GameManager {
 
 	public void onMsg(Serializable data, boolean isReliable) {
 		// if game not running ignore msg
-		if (tickRunnable == null) return;
+		if (!isGameRunning()) return;
 
 		// parse and check msg
 		FieldUpdate update = (FieldUpdate) data;
