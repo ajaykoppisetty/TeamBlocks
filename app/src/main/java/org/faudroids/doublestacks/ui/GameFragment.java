@@ -147,6 +147,15 @@ public class GameFragment extends AbstractFragment implements
 
 
 	@Override
+	public void onStop() {
+		if (gameManager.isGameRunning()) {
+			gameManager.stopGame();
+		}
+		super.onStop();
+	}
+
+
+	@Override
 	public void showWaitingRoom(Intent waitingRoomIntent) {
 		// nothing to do here ...
 	}
@@ -262,7 +271,7 @@ public class GameFragment extends AbstractFragment implements
 
 			if (fieldSurfaceHolder != null && previewSurfaceHolder != null) {
 				graphicsManager = new GraphicsManager(fieldSurfaceHolder, previewSurfaceHolder, gameManager, bitmapManager, getResources());
-				graphicsManager.redrawGraphics();
+				if (gameManager.isGameRunning()) graphicsManager.redrawGraphics();
 			}
 		}
 
