@@ -53,6 +53,8 @@ public class ConnectionManager implements MessageSender {
 
 
 	public void acceptInvitation(Invitation invitation) {
+		if (!isConnected()) return;
+
 		// accept invitation and start game
 		RoomConfig.Builder roomConfigBuilder = createDefaultRoomConfig();
 		roomConfigBuilder.setInvitationIdToAccept(invitation.getInvitationId());
@@ -61,6 +63,8 @@ public class ConnectionManager implements MessageSender {
 
 
 	public void invitePlayers(ArrayList<String> playerIds, int minAutoMatchPlayers, int maxAutoMatchPlayers) {
+		if (!isConnected()) return;
+
 		// create the room
 		Bundle autoMatchCriteria = null;
 		if (minAutoMatchPlayers > 0) {
@@ -78,6 +82,8 @@ public class ConnectionManager implements MessageSender {
 
 
 	public void autoMatchPlayer() {
+		if (!isConnected()) return;
+
 		Bundle am = RoomConfig.createAutoMatchCriteria(1, 1, 0);
 		RoomConfig.Builder roomConfigBuilder = createDefaultRoomConfig();
 		roomConfigBuilder.setAutoMatchCriteria(am);
@@ -87,6 +93,7 @@ public class ConnectionManager implements MessageSender {
 
 
 	public void leaveRoom() {
+		if (!isConnected()) return;
 		Games.RealTimeMultiplayer.leave(googleApiClient, roomUpdateListener, connectedRoom.getRoomId());
 	}
 
@@ -103,6 +110,8 @@ public class ConnectionManager implements MessageSender {
 
 	@Override
 	public void sendMessage(Serializable data, boolean reliable) {
+		if (!isConnected()) return;
+
 		// serialize data
 		byte[] bytes = null;
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -151,6 +160,11 @@ public class ConnectionManager implements MessageSender {
 
 	public void unregisterConnectionListener() {
 		this.connectionListener = null;
+	}
+
+
+	private boolean isConnected() {
+		return googleApiClient.isConnected();
 	}
 
 
