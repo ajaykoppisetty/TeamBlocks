@@ -104,9 +104,6 @@ public class MenuFragment extends AbstractFragment implements
 			}
 		});
 
-		// listen for incoming invitations
-		Games.Invitations.registerInvitationListener(googleApiClient, this);
-
 		// check for pending invitations
 		Invitation invitation = getArguments().getParcelable(EXTRA_INVITATION);
 		if (invitation != null) {
@@ -119,11 +116,13 @@ public class MenuFragment extends AbstractFragment implements
 	public void onResume() {
 		super.onResume();
 		connectionManager.registerConnectionListener(this);
+		Games.Invitations.registerInvitationListener(googleApiClient, this);
 	}
 
 
 	@Override
 	public void onPause() {
+		Games.Invitations.unregisterInvitationListener(googleApiClient);
 		connectionManager.unregisterConnectionListener();
 		super.onPause();
 	}
