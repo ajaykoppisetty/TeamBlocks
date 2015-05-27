@@ -57,8 +57,9 @@ public class MenuFragment extends AbstractFragment implements
 	@InjectView(R.id.button_invite) private Button inviteButton;
 	@InjectView(R.id.button_view_invitations) private Button viewInvitationsButton;
 	@InjectView(R.id.button_highscore) private Button highScoreButton;
-	@InjectView(R.id.button_exit) private ImageButton exitButton;
 	@InjectView(R.id.button_settings) private ImageButton settingsButton;
+	@InjectView(R.id.button_share) private ImageButton shareButton;
+	@InjectView(R.id.button_exit) private ImageButton exitButton;
 
 
 	public MenuFragment() {
@@ -103,6 +104,17 @@ public class MenuFragment extends AbstractFragment implements
 			@Override
 			public void onClick(View v) {
 				getActivity().finish();
+			}
+		});
+		shareButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+				sharingIntent.setType("text/plain");
+				String shareBody = getString(R.string.share_message);
+				sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
+				sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+				startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_title)));
 			}
 		});
 		settingsButton.setOnClickListener(new View.OnClickListener() {
