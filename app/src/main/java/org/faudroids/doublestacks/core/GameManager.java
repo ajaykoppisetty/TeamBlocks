@@ -162,6 +162,18 @@ public class GameManager {
 			if (block != null) return;
 		}
 
+		// check for easter egg
+		if (activeGroup.getType().equals(BlockType.BOX) && activeGroup.getRotationCount() == 10) {
+			Timber.d("starting heart easter egg");
+			for (int x = 0; x < activeGroup.getXSize(); ++x) {
+				for (int y = 0; y < activeGroup.getYSize(); ++y) {
+					Block block = activeGroup.getBlock(x, y);
+					if (block == null) continue;
+					block.setBitmapType(Constants.BLOCK_TYPE_HEART);
+				}
+			}
+		}
+
 		// update group
 		activeGroup = rotatedGroup;
 		sendUpdate(false);

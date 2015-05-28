@@ -2,7 +2,7 @@
 
 svg_file=blocks.svg
 block_size=30
-x_count=5
+x_count=6
 outdir="../src/main/res/drawable"
 
 dpi_regluar=60

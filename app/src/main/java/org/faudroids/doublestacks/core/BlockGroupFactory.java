@@ -19,7 +19,9 @@ public class BlockGroupFactory {
 
 	public BlockGroup createRandom() {
 		if (randomList.isEmpty()) fillRandomList();
-		return randomList.get((int) (Math.random() * randomList.size()));
+		BlockGroup group = randomList.get((int) (Math.random() * randomList.size()));
+		randomList.remove(group);
+		return group;
 	}
 
 

@@ -8,9 +8,7 @@ import java.io.Serializable;
  */
 public class Block implements Serializable {
 
-	// TODO put some awesome properties here
-
-	private final int bitmapType;
+	private int bitmapType;
 
 	public Block(int bitmapType) {
 		this.bitmapType = bitmapType;
@@ -18,6 +16,10 @@ public class Block implements Serializable {
 
 	public int getBitmapType() {
 		return bitmapType;
+	}
+
+	public void setBitmapType(int bitmapType) {
+		this.bitmapType = bitmapType;
 	}
 
 }

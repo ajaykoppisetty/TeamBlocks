@@ -10,7 +10,11 @@ public class Constants {
 			BLOCKS_COUNT_Y = 20;
 
 	public static final int
-			BLOCK_TYPE_COUNT = 6;
+			BLOCK_TYPE_COUNT = 7,
+			BLOCK_TYPE_SPECIAL_COUNT = 1;
+
+	public static final int
+			BLOCK_TYPE_HEART = 6;
 
 
 	private Constants() { }

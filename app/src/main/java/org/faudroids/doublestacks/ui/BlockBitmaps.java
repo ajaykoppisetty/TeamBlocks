@@ -22,18 +22,21 @@ public class BlockBitmaps {
 		b.bitmaps[0][3] = BitmapFactory.decodeResource(resources, R.drawable.block_blue_3);
 		b.bitmaps[0][4] = BitmapFactory.decodeResource(resources, R.drawable.block_blue_4);
 		b.bitmaps[0][5] = BitmapFactory.decodeResource(resources, R.drawable.block_blue_5);
+		b.bitmaps[0][6] = BitmapFactory.decodeResource(resources, R.drawable.block_blue_6);
 		b.bitmaps[1][0] = BitmapFactory.decodeResource(resources, R.drawable.block_yellow_0);
 		b.bitmaps[1][1] = BitmapFactory.decodeResource(resources, R.drawable.block_yellow_1);
 		b.bitmaps[1][2] = BitmapFactory.decodeResource(resources, R.drawable.block_yellow_2);
 		b.bitmaps[1][3] = BitmapFactory.decodeResource(resources, R.drawable.block_yellow_3);
 		b.bitmaps[1][4] = BitmapFactory.decodeResource(resources, R.drawable.block_yellow_4);
 		b.bitmaps[1][5] = BitmapFactory.decodeResource(resources, R.drawable.block_yellow_5);
+		b.bitmaps[1][6] = BitmapFactory.decodeResource(resources, R.drawable.block_yellow_6);
 		b.bitmaps[2][0] = BitmapFactory.decodeResource(resources, R.drawable.block_red_0);
 		b.bitmaps[2][1] = BitmapFactory.decodeResource(resources, R.drawable.block_red_1);
 		b.bitmaps[2][2] = BitmapFactory.decodeResource(resources, R.drawable.block_red_2);
 		b.bitmaps[2][3] = BitmapFactory.decodeResource(resources, R.drawable.block_red_3);
 		b.bitmaps[2][4] = BitmapFactory.decodeResource(resources, R.drawable.block_red_4);
 		b.bitmaps[2][5] = BitmapFactory.decodeResource(resources, R.drawable.block_red_5);
+		b.bitmaps[2][6] = BitmapFactory.decodeResource(resources, R.drawable.block_red_6);
 		return b;
 	}
 
