@@ -4,6 +4,8 @@ package org.faudroids.doublestacks.core;
 import android.os.Handler;
 import android.os.Looper;
 
+import org.faudroids.doublestacks.google.AchievementManager;
+
 import java.io.Serializable;
 
 import javax.inject.Inject;
@@ -25,6 +27,7 @@ public class GameManager {
 
 	private final MessageManager messageManager;
 	private final BlockGroupFactory blockGroupFactory;
+	private final AchievementManager achievementManager;
 
 	private GameUpdateListener gameUpdateListener = null;
 	private boolean isLeftPlayer;
@@ -42,9 +45,10 @@ public class GameManager {
 
 
 	@Inject
-	GameManager(MessageManager messageManager, BlockGroupFactory blockGroupFactory) {
+	GameManager(MessageManager messageManager, BlockGroupFactory blockGroupFactory, AchievementManager achievementManager) {
 		this.messageManager = messageManager;
 		this.blockGroupFactory = blockGroupFactory;
+		this.achievementManager = achievementManager;
 	}
 
 
@@ -172,6 +176,7 @@ public class GameManager {
 					block.setBitmapType(Constants.BLOCK_TYPE_HEART);
 				}
 			}
+			achievementManager.onBoxSpin();
 		}
 
 		// update group
@@ -229,6 +234,7 @@ public class GameManager {
 				if (field[blockLocation.x][blockLocation.y] != null) {
 					// send game over message
 					gameUpdateListener.onGameOver();
+					achievementManager.onGameFinished(currentScore);
 					messageManager.sendMessage(new FieldUpdate(), true);
 					stopGame();
 					return;
@@ -315,7 +321,10 @@ public class GameManager {
 				currentScore += SCORE_4_ROWS;
 				break;
 		}
-		if (removedRows > 0) gameUpdateListener.onScoreChanged();
+		if (removedRows > 0) {
+			gameUpdateListener.onScoreChanged();
+			achievementManager.onScoreChanged(currentScore);
+		}
 	}
 
 
@@ -352,6 +361,7 @@ public class GameManager {
 		// check for game over
 		if (update.isGameOver()) {
 			gameUpdateListener.onGameOver();
+			achievementManager.onGameFinished(currentScore);
 			stopGame();
 			return;
 		}

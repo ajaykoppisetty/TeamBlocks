@@ -18,7 +18,8 @@ public class AchievementManager {
 			ACHIEVEMENT_200_POINTS = "CgkI_KePsJcKEAIQAw",
 			ACHIEVEMENT_300_POINTS = "CgkI_KePsJcKEAIQBA",
 			ACHIEVEMENT_500_POINTS = "CgkI_KePsJcKEAIQBQ",
-			ACHIEVEMENT_1000_POINTS = "CgkI_KePsJcKEAIQBg";
+			ACHIEVEMENT_1000_POINTS = "CgkI_KePsJcKEAIQBg",
+			ACHIEVEMENT_SPIN_BOX = "CgkI_KePsJcKEAIQCQ";
 
 	private static final String
 			LEADERBOARD_ID = "CgkI_KePsJcKEAIQCA";
@@ -38,6 +39,11 @@ public class AchievementManager {
 		else if (score >= 300) unlockAchievement(ACHIEVEMENT_300_POINTS);
 		else if (score >= 200) unlockAchievement(ACHIEVEMENT_200_POINTS);
 		else if (score >= 100) unlockAchievement(ACHIEVEMENT_100_POINTS);
+	}
+
+
+	public void onBoxSpin() {
+		Games.Achievements.unlock(googleApiClient, ACHIEVEMENT_SPIN_BOX);
 	}
 
 
