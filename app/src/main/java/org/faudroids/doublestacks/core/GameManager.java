@@ -199,6 +199,8 @@ public class GameManager {
 	 * Called when sufficient time has passed that blocks should fall down.
 	 */
 	private void onGameTick() {
+		if (!isGameRunning()) return;
+
 		// create / move active group
 		if (activeGroup == null) {
 			Timber.d("Creating new group");
