@@ -340,7 +340,10 @@ public class GameManager {
 		while (aboveRow < Constants.BLOCKS_COUNT_Y) {
 			for (int x = 0; x < Constants.BLOCKS_COUNT_X; ++x) {
 				field[x][aboveRow - 1] = field[x][aboveRow];
+				field[x][aboveRow] = null;
+
 				partnerField[x][aboveRow - 1] = partnerField[x][aboveRow];
+				partnerField[x][aboveRow] = null;
 			}
 			++aboveRow;
 		}
