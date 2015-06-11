@@ -2,7 +2,7 @@
 
 svg_file=blocks.svg
 block_size=30
-x_count=6
+x_count=7
 outdir="../src/main/res/drawable"
 
 dpi_regluar=60
@@ -10,7 +10,7 @@ dpi_large=75
 dpi_xlarge=112.5
 
 function export {
-	for x in `seq 0 $x_count`
+	for x in `seq 6 $x_count`
 	do
 		x0=$((x*block_size))
 		x1=$((x0+block_size))

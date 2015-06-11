@@ -92,7 +92,14 @@ public class BlockGroup implements Serializable {
 	private Block[][] blocks;
 	private int xPos, yPos; // left lower position
 	private final BlockType type;
+
 	private int rotationCount = 0; // how many times this group has been rotated
+	private transient ShakeMeasurement shakeMeasurement = new ShakeMeasurement();
+	// A note about the "transient": both rotationCount and shake are purely local relevant properties
+	// and do not need to be serialized (hence the transient). However I only discovered the transient
+	// keyword after learning the hard way, that adding properties to this object will make the
+	// app incompatible with older versions. Hence rotationCount is not transient as to not break
+	// backwards capability.
 
 	private BlockGroup(Block[][] blocks, BlockType type) {
 		this.blocks = blocks;
@@ -121,6 +128,8 @@ public class BlockGroup implements Serializable {
 	}
 
 	public void setxPos(int xPos) {
+		if (xPos < this.xPos) shakeMeasurement.onShakeLeft();
+		else if (xPos > this.xPos) shakeMeasurement.onSkakeRight();
 		this.xPos = xPos;
 	}
 
@@ -140,6 +149,10 @@ public class BlockGroup implements Serializable {
 		return rotationCount;
 	}
 
+	public boolean isShaking() {
+		return shakeMeasurement.isShaking();
+	}
+
 	public BlockType getType() {
 		return type;
 	}
@@ -154,6 +167,7 @@ public class BlockGroup implements Serializable {
 		}
 		BlockGroup rotatedGroup = new BlockGroup(rotatedBlocks, type);
 		rotatedGroup.rotationCount = this.rotationCount;
+		rotatedGroup.shakeMeasurement = this.shakeMeasurement;
 
 		int newXPos = xPos;
 		int newYPos = yPos;

@@ -19,7 +19,8 @@ public class AchievementManager {
 			ACHIEVEMENT_300_POINTS = "CgkI_KePsJcKEAIQBA",
 			ACHIEVEMENT_500_POINTS = "CgkI_KePsJcKEAIQBQ",
 			ACHIEVEMENT_1000_POINTS = "CgkI_KePsJcKEAIQBg",
-			ACHIEVEMENT_SPIN_BOX = "CgkI_KePsJcKEAIQCQ";
+			ACHIEVEMENT_SPIN_BOX = "CgkI_KePsJcKEAIQCQ",
+			ACHIEVEMENT_SHAKE = "CgkI_KePsJcKEAIQCg";
 
 	private static final String
 			LEADERBOARD_ID = "CgkI_KePsJcKEAIQCA";
@@ -43,7 +44,12 @@ public class AchievementManager {
 
 
 	public void onBoxSpin() {
-		Games.Achievements.unlock(googleApiClient, ACHIEVEMENT_SPIN_BOX);
+		unlockAchievement(ACHIEVEMENT_SPIN_BOX);
+	}
+
+
+	public void onShake() {
+		unlockAchievement(ACHIEVEMENT_SHAKE);
 	}
 
 

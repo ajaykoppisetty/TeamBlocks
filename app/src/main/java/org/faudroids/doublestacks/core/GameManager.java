@@ -125,6 +125,7 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() - 1);
+		checkShaking();
 		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
 	}
@@ -145,8 +146,25 @@ public class GameManager {
 
 		// update group
 		activeGroup.setxPos(activeGroup.getxPos() + 1);
+		checkShaking();
 		sendUpdate(false);
 		gameUpdateListener.onFieldChanged();
+	}
+
+
+	private void checkShaking() {
+		// checks for shaking easter egg
+		if (activeGroup.isShaking()) {
+			Timber.d("starting shaking easter egg");
+			for (int x = 0; x < activeGroup.getXSize(); ++x) {
+				for (int y = 0; y < activeGroup.getYSize(); ++y) {
+					Block block = activeGroup.getBlock(x, y);
+					if (block == null) continue;
+					block.setBitmapType(Constants.BLOCK_TYPE_SHAKING);
+				}
+			}
+			achievementManager.onShake();
+		}
 	}
 
 
